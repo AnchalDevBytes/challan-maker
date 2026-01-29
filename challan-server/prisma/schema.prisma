@@ -1,0 +1,41 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String // hashed password
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  refreshTokens RefreshToken[]
+}
+
+model RefreshToken {
+  id              String   @id @default(uuid())
+  token           String   @unique
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt       DateTime
+  revoked         Boolean  @default(false) // was this token used already?
+  replacedByToken String?
+  createdAt       DateTime @default(now())
+  ipAddress       String?
+}
+
+model PendingUser {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String // hashed password
+  name      String?
+  otp       String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
