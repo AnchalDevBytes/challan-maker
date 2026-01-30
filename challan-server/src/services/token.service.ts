@@ -63,4 +63,16 @@ export class TokenService {
 
         return { accessToken, refreshToken: newRefreshToken };
     }
+
+    // For logout we revoke refreshToken from db
+    static async revokeRefreshToken(token: string) {
+        const record = await prisma.refreshToken.findUnique({ where: { token }});
+
+        if(!record) return;
+
+        await prisma.refreshToken.update({
+            where: { token },
+            data: { revoked: true }
+        });
+    }
 }

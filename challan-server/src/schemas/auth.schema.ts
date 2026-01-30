@@ -21,3 +21,23 @@ export const loginSchema = z.object({
     password: z.string(),
   }),
 });
+
+export const googleLoginSchema = z.object({
+  body: z.object({
+    code: z.string(),
+  }).strict(),
+}).strict();
+
+export const forgotPasswordSchema = z.object({
+  body: z.object({
+    email: z.string().email(),
+  }),
+});
+
+export const resetPasswordSchema = z.object({
+  body: z.object({
+    email: z.string().email(),
+    otp: z.string().length(6),
+    newPassword: z.string().min(8),
+  }),
+});

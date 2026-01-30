@@ -1,9 +1,16 @@
+import { OAuth2Client } from "google-auth-library";
 import { prisma } from "../lib/prisma";
 import { AppError } from "../utils/AppError";
 import { sendEmail } from "../utils/email";
 import { generateOtp } from "../utils/otp";
 import { hashPassword, verifyPassword } from "../utils/password";
 import { TokenService } from "./token.service";
+
+const googleClient = new OAuth2Client(
+    process.env.GOOGLE_CLIENT_ID,
+    process.env.GOOGLE_CLIENT_SECRET,
+    "postmessage"
+);
 
 export class AuthService {
     static async initiateSignup(email: string, password: string, name?: string) {
@@ -70,10 +77,85 @@ export class AuthService {
 
         if(!user) throw new AppError("Email not found. Invalid credentials", 401);
 
+        if(!user.password) throw new AppError("Invalid Credentials", 401);
+
         const isValid = await verifyPassword(password, user.password);
 
         if(!isValid) throw new AppError("Inorrect password. Invalid credentials", 401);
 
         return TokenService.generateAuthToken(user.id, ipAddress);
+    }
+
+    static async loginWithGoogle(code: string, ipAddress?: string ) {
+        const { tokens } = await googleClient.getToken(code);
+
+        const ticket = await googleClient.verifyIdToken({
+            idToken: tokens.id_token!,
+            audience: process.env.GOOGLE_CLIENT_ID!,
+        });
+
+        const payload = ticket.getPayload();
+        if(!payload || !payload.email) throw new AppError("Invalid Google token", 400);
+
+        const { email, name, sub: googleId, picture } = payload;
+
+        let user = await prisma.user.findUnique({ where: { email } });
+
+        if(!user) {
+            user = await prisma.user.create({
+                data: { 
+                    email, 
+                    name: name ?? null, 
+                    googleId, 
+                    avatar: picture ?? null, 
+                    password: null 
+                }
+            });
+        } else if(!user.googleId) {
+            user = await prisma.user.update({
+                where: { id: user.id },
+                data: { googleId, avatar: (user.avatar || picture) ?? null }
+            });
+        }
+
+        return TokenService.generateAuthToken(user.id, ipAddress);
+    }
+
+    static async forgotPassword(email: string) {
+        const user = await prisma.user.findUnique({ where: { email }});
+
+        if(!user) return { message: "If email exists, OTP sent to email" };
+
+        const otp = generateOtp(6);
+        const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
+
+        await prisma.passwordReset.upsert({
+            where: { email },
+            update: { token: otp, expiresAt },
+            create: { email, token: otp, expiresAt },
+        });
+
+        await sendEmail(email, "Reset Password OTP", `Your password reset OTP is ${otp}. It is valid for 10 minutes.`);
+
+        return { message: "If email exists, OTP sent to email" };
+    }
+
+    static async resetPassword(email: string, otp: string, newPassword: string)  {
+        const record = await prisma.passwordReset.findUnique({ where: { email }});
+
+        if(!record) throw new AppError("Invalid or expired OTP", 400);
+        if(record.token !== otp) throw new AppError("Invalid OTP", 400);
+        if(record.expiresAt < new Date()) throw new AppError("OTP expired", 400);
+
+        const hashedPassword = await hashPassword(newPassword);
+
+        await prisma.user.update({
+            where: { email },
+            data: { password: hashedPassword }
+        });
+
+        await prisma.passwordReset.delete({ where: { email } });
+
+        return { message: "Password reset successful. You can now login with new password" };
     }
 }

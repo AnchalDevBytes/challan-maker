@@ -10,7 +10,9 @@ datasource db {
 model User {
   id        String   @id @default(uuid())
   email     String   @unique
-  password  String // hashed password
+  password  String? // hashed password
+  googleId  String?
+  avatar    String?
   name      String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -36,6 +38,14 @@ model PendingUser {
   password  String // hashed password
   name      String?
   otp       String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model PasswordReset {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  token     String // OTP code
   expiresAt DateTime
   createdAt DateTime @default(now())
 }
