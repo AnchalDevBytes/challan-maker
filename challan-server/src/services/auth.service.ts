@@ -3,7 +3,7 @@ import { prisma } from "../lib/prisma";
 import { AppError } from "../utils/AppError";
 import { sendEmail } from "../utils/email";
 import { generateOtp } from "../utils/otp";
-import { hashPassword, verifyPassword } from "../utils/password";
+import { hashVaue, compareValue } from "../utils/password";
 import { TokenService } from "./token.service";
 
 const googleClient = new OAuth2Client(
@@ -20,8 +20,10 @@ export class AuthService {
 
         if(existingUser) throw new AppError("User already exists", 409);
 
-        const hashedPassword = await hashPassword(password);
+        const hashedPassword = await hashVaue(password);
         const otp = generateOtp(6);
+        const hashedOtp = await hashVaue(otp);
+
         const otpExpiry = new Date(Date.now() + 10 * 60 * 1000);
 
         await prisma.pendingUser.upsert({
@@ -29,14 +31,14 @@ export class AuthService {
             update: {
                 password: hashedPassword,
                 name: name ?? null,
-                otp,
+                otp: hashedOtp,
                 expiresAt: otpExpiry
             },
             create: {
                 email,
                 password: hashedPassword,
                 name: name ?? null,
-                otp,
+                otp: hashedOtp,
                 expiresAt: otpExpiry
             }
         });
@@ -51,7 +53,8 @@ export class AuthService {
 
         if(!pendingUser) throw new AppError("Signup session expired", 400);
 
-        if(pendingUser.otp !== otp) throw new AppError("Invalid OTP", 400);
+        const isValidOtp = await compareValue(otp, pendingUser.otp);
+        if(!isValidOtp) throw new AppError("Invalid OTP", 400);
 
         if(pendingUser.expiresAt < new Date()) throw new AppError("OTP expired", 400);
 
@@ -69,7 +72,17 @@ export class AuthService {
             return user;
         });
 
-        return TokenService.generateAuthToken(newUser.id, ipAddress);
+        const tokens = await TokenService.generateAuthToken(newUser.id, ipAddress);
+
+        return {
+            ...tokens,
+            user: {
+                id: newUser.id,
+                email: newUser.email,
+                name: newUser.name ?? null,
+                avatar: newUser.avatar ?? null     
+            }
+        }
     }
 
     static async login(email: string, password: string, ipAddress?: string) {
@@ -79,18 +92,28 @@ export class AuthService {
 
         if(!user.password) throw new AppError("Invalid Credentials", 401);
 
-        const isValid = await verifyPassword(password, user.password);
+        const isValid = await compareValue(password, user.password);
 
         if(!isValid) throw new AppError("Inorrect password. Invalid credentials", 401);
 
-        return TokenService.generateAuthToken(user.id, ipAddress);
+        const tokens = await TokenService.generateAuthToken(user.id, ipAddress);
+
+        return {
+            ...tokens,
+            user: {
+                id: user.id,
+                email: user.email,
+                name: user.name ?? null,
+                avatar: user.avatar ?? null,
+            }
+        }
     }
 
     static async loginWithGoogle(code: string, ipAddress?: string ) {
-        const { tokens } = await googleClient.getToken(code);
+        const { tokens: googleTokens } = await googleClient.getToken(code);
 
         const ticket = await googleClient.verifyIdToken({
-            idToken: tokens.id_token!,
+            idToken: googleTokens.id_token!,
             audience: process.env.GOOGLE_CLIENT_ID!,
         });
 
@@ -118,7 +141,17 @@ export class AuthService {
             });
         }
 
-        return TokenService.generateAuthToken(user.id, ipAddress);
+        const tokens = await TokenService.generateAuthToken(user.id, ipAddress);
+
+        return {
+            ...tokens,
+            user: {
+                id: user.id,
+                email: user.email,
+                name: user.name ?? null,
+                avatar: user.avatar ?? null,
+            }
+        }
     }
 
     static async forgotPassword(email: string) {
@@ -142,12 +175,14 @@ export class AuthService {
 
     static async resetPassword(email: string, otp: string, newPassword: string)  {
         const record = await prisma.passwordReset.findUnique({ where: { email }});
-
         if(!record) throw new AppError("Invalid or expired OTP", 400);
-        if(record.token !== otp) throw new AppError("Invalid OTP", 400);
+
+        const isValidOtp = await compareValue(otp, record.token);
+        if(!isValidOtp) throw new AppError("Invalid OTP", 400);
+
         if(record.expiresAt < new Date()) throw new AppError("OTP expired", 400);
 
-        const hashedPassword = await hashPassword(newPassword);
+        const hashedPassword = await hashVaue(newPassword);
 
         await prisma.user.update({
             where: { email },

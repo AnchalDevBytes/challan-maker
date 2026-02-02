@@ -34,7 +34,8 @@ export class TokenService {
     // Rotate token: invalidate old refresh token and issue a new pair
     static async refreshAuth(inComingRefreshToken: string, ipAddress?: string) {
         const existingToken = await prisma.refreshToken.findUnique({
-            where: { token: inComingRefreshToken }
+            where: { token: inComingRefreshToken },
+            include: { user: true }
         });
 
         if(!existingToken) throw new AppError("Invalid token", 401);
@@ -61,7 +62,15 @@ export class TokenService {
             }
         });
 
-        return { accessToken, refreshToken: newRefreshToken };
+        return { 
+            accessToken, 
+            refreshToken: newRefreshToken,
+            user: {
+                id: existingToken.user.id,
+                email: existingToken.user.email,
+                name: existingToken.user.name ?? null,
+            } 
+        };
     }
 
     // For logout we revoke refreshToken from db
