@@ -193,4 +193,26 @@ export class AuthService {
 
         return { message: "Password reset successful. You can now login with new password" };
     }
+
+    static async resendOtp(email: string) {
+        const pendingUser = await prisma.pendingUser.findUnique({ where: { email }});
+
+        if(!pendingUser) throw new AppError("Session expired. Please signup again.", 400);
+
+        const otp = generateOtp(6);
+        const hashedOtp = await hashVaue(otp);
+        const otpExpiry = new Date(Date.now() + 10 * 60 * 1000);
+
+        await prisma.pendingUser.update({
+            where: { email },
+            data: {
+                otp: hashedOtp,
+                expiresAt: otpExpiry
+            }
+        });
+
+        await sendEmail(email, "Resend OTP", `Your new OTp is ${otp}. Valid for 10 minutes.`);
+
+        return { message: "New OTP sent to your email" };
+    }
 }

@@ -28,7 +28,7 @@ export const googleLoginSchema = z.object({
   }).strict(),
 }).strict();
 
-export const forgotPasswordSchema = z.object({
+export const emailValidateSchema = z.object({
   body: z.object({
     email: z.string().email(),
   }),

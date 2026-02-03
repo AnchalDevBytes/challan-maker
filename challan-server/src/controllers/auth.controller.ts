@@ -126,3 +126,16 @@ export const resetPassword = async (req: Request, res: Response, next: NextFunct
         next(error);
     }
 }
+
+export const resendOtp = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { email } = req.body;
+        const result = await AuthService.resendOtp(email);
+
+        res.status(200).json(
+            new ApiResponse(200, null, result.message || "New OTP sent to your email")
+        );
+    } catch (error) {
+        next(error);
+    }
+}
