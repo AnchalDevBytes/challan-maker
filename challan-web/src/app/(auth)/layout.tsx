@@ -1,9 +1,13 @@
-const AurhLayout = ({ children} : { children: React.ReactNode }) => {
+import { GoogleOAuthProvider } from '@react-oauth/google';
+
+const AuthLayout = ({ children} : { children: React.ReactNode }) => {
   return (
-    <div className="flex items-center justify-center">
-      {children}
-    </div>
+    <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!}>
+      <div>
+        { children }
+      </div>
+    </GoogleOAuthProvider>
   )
 }
 
-export default AurhLayout;
+export default AuthLayout;
