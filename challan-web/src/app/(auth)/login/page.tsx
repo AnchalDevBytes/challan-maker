@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import z, { email } from "zod";
+import z from "zod";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
