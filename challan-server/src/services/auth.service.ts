@@ -160,12 +160,14 @@ export class AuthService {
         if(!user) return { message: "If email exists, OTP sent to email" };
 
         const otp = generateOtp(6);
+        const hashedOtp = await hashVaue(otp);
+
         const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
 
         await prisma.passwordReset.upsert({
             where: { email },
-            update: { token: otp, expiresAt },
-            create: { email, token: otp, expiresAt },
+            update: { token: hashedOtp, expiresAt },
+            create: { email, token: hashedOtp, expiresAt },
         });
 
         await sendEmail(email, "Reset Password OTP", `Your password reset OTP is ${otp}. It is valid for 10 minutes.`);
