@@ -2,6 +2,7 @@
 
 import api from "@/lib/api";
 import { cn } from "@/lib/utils";
+import { useAuthStore } from "@/store/auth-store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useGoogleLogin } from "@react-oauth/google";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
@@ -21,6 +22,7 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 
 const Login = () => {
   const router = useRouter();
+  const { setUser } = useAuthStore();
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const {
@@ -33,8 +35,11 @@ const Login = () => {
 
   const onSubmit = async (data: LoginFormValues) => {
     try {
-      await api.post("/auth/login", data);
-      toast.success("Login back!");
+      const response = await api.post("/auth/login", data);
+      const userData = response.data.data.user;
+      setUser(userData);
+
+      toast.success(response.data.message || "Welcome back!");
       router.push("/main");
     } catch (error: any) {
       toast.error(error.response?.data?.message || "Login failed");
@@ -44,8 +49,12 @@ const Login = () => {
   const googleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       try {
-        await api.post("auth/google", { code: tokenResponse.code });
-        toast.success("Login successful");
+        const response = await api.post("auth/google", { code: tokenResponse.code });
+
+        const userData = response.data.data.user;
+        setUser(userData);
+
+        toast.success(response.data.message || "Login successful");
         router.push("/main");
       } catch (error) {
         toast.error("Google login failed");

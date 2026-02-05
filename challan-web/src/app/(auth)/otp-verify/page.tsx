@@ -11,7 +11,7 @@ import { formatTime } from "@/helpers/formatTime";
 
 const OtpVerify = ({ length = 6} : { length?: number }) => {
     const router = useRouter();
-    const { tempEmail } = useAuthStore();
+    const { tempEmail, setUser } = useAuthStore();
     const [otp, setOtp] = useState<string[]>(Array(length).fill(""));
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const [isResending, setIsResending] = useState<boolean>(false);
@@ -73,9 +73,12 @@ const OtpVerify = ({ length = 6} : { length?: number }) => {
         setIsSubmitting(true);
 
         try {
-            await api.post("/auth/verify-otp", { email: tempEmail, otp: otpValue });
+            const response = await api.post("/auth/verify-otp", { email: tempEmail, otp: otpValue });
 
-            toast.success("Account verified successfully");
+            const userData = response.data.data.user;
+            setUser(userData);
+
+            toast.success(response.data.message || "Account verified successfully");
             router.push("/main");
         } catch (error: any) {
             toast.error(error.response?.data?.message || "Invalid OTP");
