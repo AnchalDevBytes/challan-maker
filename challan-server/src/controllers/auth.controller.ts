@@ -65,24 +65,6 @@ export const loginController = async (req: Request, res: Response, next: NextFun
     }
 };
 
-export const logout = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const incomingToken = req.cookies.refreshToken || req.body.refreshToken;
-
-        if(incomingToken) {
-            await TokenService.revokeRefreshToken(incomingToken);
-        }
-
-        clearAuthCookies(res);
-
-        res.status(200).json(
-            new ApiResponse(200, null, "Logout successful")
-        );  
-    } catch (error) {
-        next(error);
-    }
-}
-
 export const googleLogin = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { code } = req.body;
@@ -139,3 +121,21 @@ export const resendOtp = async (req: Request, res: Response, next: NextFunction)
         next(error);
     }
 }
+
+export const logout = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const incomingToken = req.cookies.refreshToken || req.body.refreshToken;
+
+        if(incomingToken) {
+            await TokenService.revokeRefreshToken(incomingToken);
+        }
+
+        clearAuthCookies(res);
+
+        res.status(200).json(
+            new ApiResponse(200, null, "Logout successful")
+        );  
+    } catch (error) {
+        next(error);
+    }
+};
