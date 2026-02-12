@@ -18,6 +18,10 @@ model User {
   updatedAt DateTime @updatedAt
 
   refreshTokens RefreshToken[]
+
+  invoices Invoice[]
+
+  plan PlanType @default(FREE)
 }
 
 model RefreshToken {
@@ -48,4 +52,42 @@ model PasswordReset {
   token     String // OTP code
   expiresAt DateTime
   createdAt DateTime @default(now())
+}
+
+model Invoice {
+  id String @id @default(uuid())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  invoiceNumber String
+  customerName  String
+  issueDate     DateTime
+  dueDate       DateTime?
+  status        InvoiceStatus @default(DRAFT)
+
+  totalAmount Decimal @db.Decimal(10, 2)
+  currency    String  @default("INR")
+
+  pdfUrl      String?
+  pdfPublicId String?
+
+  invoiceData Json
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, createdAt])
+}
+
+enum InvoiceStatus {
+  DRAFT
+  PENDING
+  PAID
+  OVERDUE
+}
+
+enum PlanType {
+  FREE
+  PREMIUM
 }
