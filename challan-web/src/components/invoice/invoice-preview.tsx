@@ -2,9 +2,18 @@
 import { useGuestStore } from "@/store/guest-store";
 import { format } from "date-fns";
 import { Separator } from "@/components/ui/separator";
+import { InvoiceFormValues } from "@/schemas/invoice.schema";
 
-export default function GuestInvoicePreview() {
-  const { currentDraft } = useGuestStore();
+interface PreviewProps {
+  data?: InvoiceFormValues;
+  removeBranding?: boolean;
+}
+
+export default function InvoicePreview({ data, removeBranding }: PreviewProps) {
+  const store = useGuestStore();
+  const currentDraft = data || store.currentDraft;
+
+  const showBranding = removeBranding === undefined ? !data : !removeBranding;
   
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-IN', {
@@ -21,9 +30,11 @@ export default function GuestInvoicePreview() {
 
   return (
     <div className="w-full bg-white shadow-lg border border-neutral-200 min-h-250 p-8 md:p-12 text-sm text-neutral-800 font-sans relative overflow-hidden">
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0 opacity-[0.03]">
-        <span className="text-9xl font-bold -rotate-45 text-black text-center">CHALLAN MAKER</span>
-      </div>
+      {showBranding && (
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0 opacity-[0.03]">
+          <span className="text-9xl font-bold -rotate-45 text-black text-center">CHALLAN MAKER</span>
+        </div>
+      )}
 
       <div className="relative z-10 space-y-6">
         <div className="flex justify-between items-start">

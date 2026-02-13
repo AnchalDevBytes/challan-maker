@@ -3,9 +3,9 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
 import GuestInvoiceForm from "@/components/guest-invoice-form";
-import { GuestBottomNav } from "@/components/guest-bottom-nav";
-import GuestInvoicePreview from "@/components/guest-invoice-preview";
 import { useGuestStore } from "@/store/guest-store";
+import InvoicePreview from "@/components/invoice/invoice-preview";
+import { BottomNav } from "@/components/bottom-nav";
 
 export default function GuestDashboard() {
   const [mounted, setMounted] = useState(false);
@@ -49,13 +49,13 @@ export default function GuestDashboard() {
                   <h2 className="text-2xl ml-8 font-bold text-neutral-700">Invoice   Preview</h2>
               </div>
               <div className="origin-top scale-[0.95]"> 
-                  <GuestInvoicePreview />
+                  <InvoicePreview />
               </div>
           </div>
         </div>
       </main>
       
-      <GuestBottomNav/>
+      <BottomNav/>
     </div>
   );
 }

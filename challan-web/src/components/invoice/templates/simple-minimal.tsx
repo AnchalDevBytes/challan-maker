@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
 });
 
 
-export const SimpleMinimalTemplate = ({ data }: InvoiceTemplateProps) => {
+export const SimpleMinimalTemplate = ({ data, removeBranding }: InvoiceTemplateProps) => {
     const subTotal = data.items.reduce((sum, item) => sum + (item.quantity * item.unitPrice), 0);
     const taxAmount = (subTotal * (data.taxRate || 0)) / 100;
     const discountAmount = data.discount || 0;
@@ -102,7 +102,9 @@ export const SimpleMinimalTemplate = ({ data }: InvoiceTemplateProps) => {
     return (
         <Document>
             <Page size="A4" style={styles.page}>
-                <Text style={styles.watermark}>CHALLAN MAKER</Text>
+                {!removeBranding && (
+                    <Text style={styles.watermark}>CHALLAN MAKER</Text>
+                )}
 
                 <View style={styles.header}>
                     <View style={styles.senderDetails}>
@@ -237,9 +239,11 @@ export const SimpleMinimalTemplate = ({ data }: InvoiceTemplateProps) => {
                     </View>
                 </View>
                 
-                <View style={styles.branding}>
-                    <Text>Generated for free using Challan Maker</Text>
-                </View>
+                {!removeBranding && (
+                    <View style={styles.branding}>
+                        <Text>Generated for free using Challan Maker</Text>
+                    </View>
+                )}
             </Page>
         </Document>
     );

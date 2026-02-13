@@ -24,8 +24,8 @@ const bankDetailsSchema = z.object({
 export const invoiceSchema = z.object({
     invoiceNumber: z.string().min(1, "Invoice No. is required"),
 
-    issueDate: z.date().refine((date) => date instanceof Date, "Issue Date is required"),
-    dueDate: z.date().nullable().optional().default(null),
+    issueDate: z.coerce.date(),
+    dueDate: z.coerce.date().nullable().optional(),
 
     senderDetails: detailsSchema,
     clientDetails: detailsSchema,
@@ -44,7 +44,7 @@ export const invoiceSchema = z.object({
 
     bankDetails: bankDetailsSchema.optional(),
 
-    status: z.enum(["DRAFT", "GENERATED"]).default("DRAFT"),
+    status: z.enum(["DRAFT", "PENDING", "PAID", "OVERDUE"]).default("DRAFT"),
 });
 
 export type InvoiceFormValues = z.infer<typeof invoiceSchema>;

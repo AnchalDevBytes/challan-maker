@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 const protectedRoute = ["/main"];
-const authPaths = ["/login", "/signup", "/otp-verify", "/forgot-password", "/reset-password"];
+const authPaths = ["/login", "/signup", "/otp-verify", "/forgot-password", "/reset-password", "/guest"];
 
 export function middleware(request: NextRequest) {
     const hasToken = request.cookies.has("refreshToken");

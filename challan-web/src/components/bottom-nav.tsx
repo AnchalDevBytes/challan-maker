@@ -24,7 +24,7 @@ import { SimpleMinimalTemplate } from "./invoice/templates/simple-minimal";
 import { pdf } from "@react-pdf/renderer";
 import { saveAs } from "file-saver";
 
-export function GuestBottomNav() {
+export function BottomNav() {
   const { uiSettings, toggleUiSetting, resetDraft, currentDraft } = useGuestStore();
   const [isDownloading, setIsDownloading] = useState(false);
 
@@ -133,7 +133,7 @@ export function GuestBottomNav() {
           
           <Button 
             onClick={handleDownload}
-            className="rounded-xl bg-neutral-900 text-white hover:bg-black px-4 shadow-lg shadow-neutral-900/20"
+            className="rounded-xl bg-dark-blue text-white hover:bg-blue px-4 shadow-lg shadow-neutral-900/20"
           >
             {!isDownloading && <Download className="w-4 h-4 sm:mr-2" />}
             {isDownloading ? <Loader2 className="animate-spin"/> : <span className="hidden sm:inline">Download</span>}
