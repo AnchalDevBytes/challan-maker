@@ -45,7 +45,7 @@ export const invoiceSchema = z.object({
 
     bankDetails: bankDetailsSchema.optional(),
 
-    status: z.enum(["DRAFT", "GENERATED", "PAID", "OVERDUE"]).default("DRAFT"),
+    status: z.enum(["DRAFT", "PENDING", "PAID", "OVERDUE"]).default("DRAFT"),
 });
 
 export type InvoiceFormValues = z.infer<typeof invoiceSchema>;

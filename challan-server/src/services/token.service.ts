@@ -8,13 +8,13 @@ const REFRESH_SECRET = process.env.JWT_REFRESH_SECRET!;
 export class TokenService {
     static async generateAuthToken(userId: string, ipAddress?: string) {
         const accessToken = jwt.sign(
-            { sub: userId },
+            { id: userId },
             ACCESS_SECRET, 
             { expiresIn: '15m'}
         );
 
         const refreshToken = jwt.sign(
-            { sub: userId },
+            { id: userId },
             REFRESH_SECRET,
             { expiresIn: '7d' }
         );

@@ -10,7 +10,7 @@ const upload = multer({
     limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
 });
 
-router.post("/invoice", requireAuth, upload.single("file"), createInvoice);
-router.get("/invoice", requireAuth, getInvoices);
+router.post("/", requireAuth, upload.single("file"), createInvoice);
+router.get("/", requireAuth, getInvoices);
 
 export default router;

@@ -13,14 +13,33 @@ declare global {
 
 export const requireAuth = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const token = req.cookies?.accessToken || (req.headers.authorization?.startsWith("Bearer") ? req.headers.authorization.split(" ")[1] : null);
+        const headerToken = req.headers.authorization?.startsWith("Bearer") 
+            ? req.headers.authorization.split(" ")[1] 
+            : null;
+        
+        const cookieToken = req.cookies?.accessToken;
 
-        if(!token) throw new AppError("Unauthorized, Please login", 401);
+        let decoded: { id: string, email: string } | null = null;
 
-        const decoded = jwt.verify(
-            token, 
-            process.env.JWT_ACCESS_SECRET!
-        ) as { id: string, email: string };
+        if (headerToken) {
+            try {
+                decoded = jwt.verify(headerToken, process.env.JWT_ACCESS_SECRET!) as any;
+            } catch (error) {
+                decoded = null;
+            }
+        }
+
+        if (!decoded && cookieToken) {
+            try {
+                decoded = jwt.verify(cookieToken, process.env.JWT_ACCESS_SECRET!) as any;
+            } catch (error) {
+                decoded = null;
+            }
+        }
+
+        if(!decoded) {
+            throw new AppError("Unauthorized: No valid token provided", 401);
+        }
 
         const user = await prisma.user.findUnique({ 
             where: { id: decoded.id }, 
@@ -33,6 +52,6 @@ export const requireAuth = async (req: Request, res: Response, next: NextFunctio
         next();
 
     } catch (error) {
-        next(new AppError(`error, "Invalid or expired token"`, 401));
+        next(error);
     }
 };
