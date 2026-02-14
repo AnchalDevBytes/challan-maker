@@ -5,7 +5,6 @@ import { Loader2 } from "lucide-react";
 import GuestInvoiceForm from "@/components/guest-invoice-form";
 import { useGuestStore } from "@/store/guest-store";
 import InvoicePreview from "@/components/invoice/invoice-preview";
-import { BottomNav } from "@/components/bottom-nav";
 
 export default function GuestDashboard() {
   const [mounted, setMounted] = useState(false);
@@ -54,8 +53,6 @@ export default function GuestDashboard() {
           </div>
         </div>
       </main>
-      
-      <BottomNav/>
     </div>
   );
 }

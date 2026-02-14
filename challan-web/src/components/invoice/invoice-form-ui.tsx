@@ -17,15 +17,9 @@ interface InvoiceFormUIProps {
     logo: string | null;
     onLogoUpload: (base64: string) => void;
     onLogoRemove: () => void;
-    uiSettings: {
-        showTax: boolean;
-        showDiscount: boolean;
-        showShipping: boolean;
-        showBankDetails: boolean;
-    };
 }
 
-export function InvoiceFormUI({ form, logo, onLogoUpload, onLogoRemove, uiSettings }: InvoiceFormUIProps) {
+export function InvoiceFormUI({ form, logo, onLogoUpload, onLogoRemove }: InvoiceFormUIProps) {
     const { register, control, watch, setValue, formState: { errors } } = form;
     const fileInputRef = useRef<HTMLInputElement>(null);
     
@@ -59,10 +53,11 @@ export function InvoiceFormUI({ form, logo, onLogoUpload, onLogoRemove, uiSettin
     
     const getVal = (key: any) => Number(watch(key) || 0);
     
-    const taxRate = uiSettings.showTax ? getVal("taxRate") : 0;
+    const taxRate = Number(watch("taxRate") || 0);
+    const discount = Number(watch("discount") || 0);
+    const shipping = Number(watch("shipping") || 0);
+
     const taxAmount = (subTotal * taxRate) / 100;
-    const discount = uiSettings.showDiscount ? getVal("discount") : 0;
-    const shipping = uiSettings.showShipping ? getVal("shipping") : 0;
     const grandTotal = subTotal + taxAmount + shipping - discount;
     const currency = watch("currency");
 
@@ -251,29 +246,23 @@ export function InvoiceFormUI({ form, logo, onLogoUpload, onLogoRemove, uiSettin
                             <span className="font-medium text-neutral-900">{subTotal.toFixed(2)}</span>
                         </div>
 
-                        {uiSettings.showTax && (
-                            <div className="flex justify-between items-center text-sm">
-                                <span className="text-neutral-500">Tax (%)</span>
-                                <div className="flex items-center gap-2">
-                                    {taxRate > 0 && <span className="text-xs text-neutral-400 font-mono">(+ {currency} {taxAmount.toFixed(2)})</span>}
-                                    <Input type="number" {...register("taxRate", { valueAsNumber: true })} className="w-20 text-right h-8" />
-                                </div>
+                        <div className="flex justify-between items-center text-sm">
+                            <span className="text-neutral-500">Tax (%)</span>
+                            <div className="flex items-center gap-2">
+                                {taxRate > 0 && <span className="text-xs text-neutral-400 font-mono">(+ {currency} {taxAmount.toFixed(2)})</span>}
+                                <Input type="number" {...register("taxRate", { valueAsNumber: true })} className="w-20 text-right h-8" />
                             </div>
-                        )}
+                        </div>
 
-                        {uiSettings.showDiscount && (
-                            <div className="flex justify-between items-center text-sm">
-                                <span className="text-neutral-500">Discount</span>
-                                <Input type="number" {...register("discount", { valueAsNumber: true })} className="w-20 text-right h-8" />
-                            </div>
-                        )}
+                        <div className="flex justify-between items-center text-sm">
+                            <span className="text-neutral-500">Discount</span>
+                            <Input type="number" {...register("discount", { valueAsNumber: true })} className="w-20 text-right h-8" />
+                        </div>
 
-                        {uiSettings.showShipping && (
-                            <div className="flex justify-between items-center text-sm">
-                                <span className="text-neutral-500">Shipping</span>
-                                <Input type="number" {...register("shipping", { valueAsNumber: true })} className="w-20 text-right h-8" />
-                            </div>
-                        )}
+                        <div className="flex justify-between items-center text-sm">
+                            <span className="text-neutral-500">Shipping</span>
+                            <Input type="number" {...register("shipping", { valueAsNumber: true })} className="w-20 text-right h-8" />
+                        </div>
 
                         <Separator className="my-2" />
 
@@ -284,20 +273,16 @@ export function InvoiceFormUI({ form, logo, onLogoUpload, onLogoRemove, uiSettin
                     </div>
                 </div>
 
-                <div>
-                    {uiSettings.showBankDetails && (
-                        <div className="space-y-3 p-4 bg-neutral-50 rounded-lg border border-neutral-100">
-                            <Label className="text-xs font-semibold text-neutral-500 uppercase flex items-center gap-2">
-                                <Landmark className="w-3 h-3" /> Bank Details
-                            </Label>
-                            <div className="grid grid-cols-2 gap-3">
-                                <Input {...register("bankDetails.bankName")} placeholder="Bank Name" className="bg-white h-8 text-sm" />
-                                <Input {...register("bankDetails.accountName")} placeholder="Account Holder" className="bg-white h-8 text-sm" />
-                                <Input {...register("bankDetails.accountNumber")} placeholder="Account No." className="bg-white h-8 text-sm" />
-                                <Input {...register("bankDetails.ifscCode")} placeholder="IFSC / SWIFT" className="bg-white h-8 text-sm" />
-                            </div>
-                        </div>
-                    )}
+                <div className="space-y-3 p-4 bg-neutral-50 rounded-lg border border-neutral-100">
+                    <Label className="text-xs font-semibold text-neutral-500 uppercase flex items-center gap-2">
+                        <Landmark className="w-3 h-3" /> Bank Details
+                    </Label>
+                    <div className="grid grid-cols-2 gap-3">
+                        <Input {...register("bankDetails.bankName")} placeholder="Bank Name" className="bg-white h-8 text-sm" />
+                        <Input {...register("bankDetails.accountName")} placeholder="Account Holder" className="bg-white h-8 text-sm" />
+                        <Input {...register("bankDetails.accountNumber")} placeholder="Account No." className="bg-white h-8 text-sm" />
+                        <Input {...register("bankDetails.ifscCode")} placeholder="IFSC / SWIFT" className="bg-white h-8 text-sm" />
+                    </div>
                 </div>
 
                 <div className="flex justify-between space-x-4">

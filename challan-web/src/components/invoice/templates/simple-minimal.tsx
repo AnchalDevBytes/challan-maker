@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
   footerTitle: { fontSize: 8, fontWeight: 'bold', color: '#888', textTransform: 'uppercase', marginBottom: 4 },
   footerText: { fontSize: 8, color: '#666', lineHeight: 1.5 },
   
-  watermark: { position: 'absolute', top: 350, left: 100, fontSize: 100, color: 'rgba(200, 200, 200, 0.15)', transform: 'rotate(-45deg)', zIndex: -1, textAlign: 'center', width: 500 },
+  watermark: { position: 'absolute', top: 350, left: 90, transform: 'translate(-50%, -50%) rotate(-45deg)', fontWeight: 600, fontSize: 106, color: "#000000", zIndex: -1, textAlign: 'center', opacity: 0.03 },
   branding: { position: 'absolute', bottom: 20, left: 0, right: 0, textAlign: 'center', fontSize: 8, color: '#aaa', borderTopWidth: 1, borderTopColor: '#f5f5f5', paddingTop: 10 }
 });
 

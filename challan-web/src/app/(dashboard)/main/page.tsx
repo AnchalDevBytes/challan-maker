@@ -17,8 +17,12 @@ import { format } from "date-fns";
 import { useAuthInvoiceStore } from "@/store/auth-invoice-store";
 import { DashboardLayout } from "@/components/dashboard-layout";
 import InvoicePreview from "@/components/invoice/invoice-preview";
+import { AuthBottomNav } from "@/components/auth-bottom-nav";
+import { useAuthStore } from "@/store/auth-store";
 
 export default function DashboardPage() {
+    const { user } = useAuthStore();
+    const [currentTab, setCurrentTab] = useState("create");
     const [isSaving, setIsSaving] = useState(false);
     const [isLoadingHistory, setIsLoadingHistory] = useState(true);
     
@@ -103,28 +107,7 @@ export default function DashboardPage() {
 
     return (
         <DashboardLayout>
-            <Tabs defaultValue="create" className="w-full space-y-6">
-                <div className="flex justify-between items-center">
-                    <TabsList className="grid w-75 grid-cols-2">
-                        <TabsTrigger value="create" className="flex items-center gap-2">
-                            <Plus className="w-4 h-4" /> New Invoice
-                        </TabsTrigger>
-                        <TabsTrigger value="history" className="flex items-center gap-2">
-                            <History className="w-4 h-4" /> History
-                        </TabsTrigger>
-                    </TabsList>
-
-                    <div className="flex gap-2">
-                        <Button onClick={handleSave} disabled={isSaving} className="bg-blue hover:bg-dark-blue text-white shadow-sm">
-                            {isSaving ? (
-                                <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Saving...</>
-                            ) : (
-                                <><Save className="w-4 h-4 mr-2" /> Save & Generate</>
-                            )}
-                        </Button>
-                    </div>
-                </div>
-
+            <Tabs value={currentTab} onValueChange={setCurrentTab} className="w-full space-y-6">
                 <TabsContent value="create" className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
                     <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 items-start">
                         <div className="space-y-4">
@@ -133,11 +116,10 @@ export default function DashboardPage() {
                                 logo={activeInvoice.logo}
                                 onLogoUpload={handleLogoUpload}
                                 onLogoRemove={handleLogoRemove}
-                                uiSettings={{ showTax: true, showDiscount: true, showShipping: true, showBankDetails: true }}
                             />
                         </div>
 
-                        <div className="block sticky top-24 space-y-4">
+                        <div className="block sticky top-8 space-y-4">
                             <InvoicePreview data={activeInvoice} removeBranding={true} /> 
                         </div>
                     </div>
@@ -166,7 +148,7 @@ export default function DashboardPage() {
                                         return (
                                             <div key={inv.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border rounded-lg hover:bg-neutral-50 transition-colors gap-4">
                                                 <div className="flex items-start gap-4">
-                                                    <div className="h-10 w-10 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center shrink-0">
+                                                    <div className="h-10 w-10 bg-blue-50 text-blue rounded-full flex items-center justify-center shrink-0">
                                                         <FileText className="w-5 h-5" />
                                                     </div>
                                                     <div>
@@ -210,6 +192,14 @@ export default function DashboardPage() {
                     </Card>
                 </TabsContent>
             </Tabs>
+
+            <AuthBottomNav
+                onSave={handleSave}
+                isSaving={isSaving}
+                activeTab={currentTab}
+                onTabChange={setCurrentTab}
+                userEmail={user?.email}
+            />
         </DashboardLayout>
     );
 }

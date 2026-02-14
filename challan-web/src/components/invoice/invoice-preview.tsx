@@ -32,7 +32,7 @@ export default function InvoicePreview({ data, removeBranding }: PreviewProps) {
     <div className="w-full bg-white shadow-lg border border-neutral-200 min-h-250 p-8 md:p-12 text-sm text-neutral-800 font-sans relative overflow-hidden">
       {showBranding && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0 opacity-[0.03]">
-          <span className="text-9xl font-bold -rotate-45 text-black text-center">CHALLAN MAKER</span>
+          <span className="text-9xl font-semibold -rotate-45 text-black text-center">CHALLAN MAKER</span>
         </div>
       )}
 

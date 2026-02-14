@@ -18,15 +18,6 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
                 </Link>
             </div>
 
-            <header className="bg-white border-b border-neutral-200 py-4 px-6 flex justify-between items-center">
-                <div className="font-bold text-xl tracking-tight text-neutral-900">
-                    CHALLAN MAKER <span className="text-xs font-normal text-neutral-500 ml-2 bg-neutral-100 px-2 py-0.5 rounded-full">BETA</span>
-                </div>
-                <div className="flex items-center gap-4">
-                    <LogoutButton/>
-                </div>
-            </header>
-
             <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
                 {children}
             </main>

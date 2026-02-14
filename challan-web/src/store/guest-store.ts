@@ -5,17 +5,9 @@ import { createJSONStorage, persist } from "zustand/middleware";
 
 interface GuestState {
     currentDraft: InvoiceFormValues;
-
-    uiSettings: {
-        showTax: boolean;
-        showDiscount: boolean;
-        showShipping: boolean;
-        showBankDetails: boolean;
-    };
     resetKey: number;
 
     setDraft: (data: Partial<InvoiceFormValues>) => void;
-    toggleUiSetting: (key: keyof GuestState['uiSettings']) => void;
     resetDraft: () => void;
 
     addItem: () => void;
@@ -60,27 +52,6 @@ export const useGuestStore = create<GuestState>()(
                 set((state) => ({
                     currentDraft: { ...state.currentDraft, ...data }, 
                 })),
-
-
-            toggleUiSetting: (key) => 
-                set((state) => {
-                    const isTurningOff = state.uiSettings[key];
-                    const updates: Partial<InvoiceFormValues> = {};
-
-                    if(isTurningOff) {
-                        if(key === "showTax") updates.taxRate = 0;
-                        if(key === "showDiscount") updates.discount = 0;
-                        if(key === "showShipping") updates.shipping = 0;
-                        if(key === "showBankDetails") {
-                            updates.bankDetails = { bankName: "", accountName: "", accountNumber: "", ifscCode: "" };
-                        }
-                    }
-
-                    return {
-                        uiSettings: { ...state.uiSettings, [key]: !state.uiSettings[key] },
-                        currentDraft: { ...state.currentDraft, ...updates },
-                    };
-                }),
 
             resetDraft: () => 
                 set((state) => ({ 
@@ -128,7 +99,12 @@ export const useGuestStore = create<GuestState>()(
             storage: createJSONStorage(() => localStorage),
             onRehydrateStorage: () => (state: GuestState | undefined) => {
                 if(state) {
-                    state.currentDraft.issueDate = new Date(state.currentDraft.issueDate);
+                    if(state.currentDraft.issueDate) {
+                        state.currentDraft.issueDate = new Date(state.currentDraft.issueDate);
+                    } else {
+                        state.currentDraft.issueDate = new Date();
+                    }
+                    
                     if(state.currentDraft.dueDate) state.currentDraft.dueDate = new Date(state.currentDraft.dueDate);
                 }
             }
