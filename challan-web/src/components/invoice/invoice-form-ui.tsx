@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
 interface InvoiceFormUIProps {
     form: UseFormReturn<InvoiceFormValues>;
     logo: string | null;
-    onLogoUpload: (base64: string) => void;
+    onLogoUpload: (base64: string, file?: File) => void;
     onLogoRemove: () => void;
 }
 
@@ -37,7 +37,7 @@ export function InvoiceFormUI({ form, logo, onLogoUpload, onLogoRemove }: Invoic
             }
             const reader = new FileReader();
             reader.onloadend = () => {
-                onLogoUpload(reader.result as string);
+                onLogoUpload(reader.result as string, file);
             };
             reader.readAsDataURL(file);
         }

@@ -6,25 +6,22 @@ import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { useAuthInvoiceStore } from "@/store/auth-invoice-store";
-import { toast } from "sonner";
 import LogoutButton from "@/components/logout-button";
 
 interface AuthBottomNavProps {
   onSave: () => void;
+  onReset: () => void;
   isSaving: boolean;
   activeTab: string;
   onTabChange: (tab: string) => void;
   userEmail?: string;
 }
 
-export function AuthBottomNav({ onSave, isSaving, activeTab, onTabChange,  userEmail }: AuthBottomNavProps) {
-  const { resetActiveInvoice } = useAuthInvoiceStore();
+export function AuthBottomNav({ onSave, onReset, isSaving, activeTab, onTabChange,  userEmail }: AuthBottomNavProps) {
 
   const handleReset = () => {
     if(confirm("Clear current invoice form?")) {
-        resetActiveInvoice();
-        toast.success("Form cleared");
+        onReset();
     }
   };
 
@@ -62,11 +59,7 @@ export function AuthBottomNav({ onSave, isSaving, activeTab, onTabChange,  userE
                                 Buy Premium
                             </Button>
                         </Link>
-                        <Link href="/login" className="w-full">
-                            <Button size="sm" variant={"outline"} className="w-full justify-center h-9 cursor-pointer">
-                                Login
-                            </Button>
-                        </Link>
+                        <LogoutButton/>
                     </div>
                 </div>
             </PopoverContent>
