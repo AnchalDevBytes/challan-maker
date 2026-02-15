@@ -1,16 +1,20 @@
 import { Router } from "express";
 import multer from "multer";
 import { requireAuth } from "../middlewares/auth.middleware";
-import { createInvoice, getInvoices } from "../controllers/invoice.controller";
+import { createInvoice, deleteInvoice, getInvoices, updateInvoice, uploadLogo } from "../controllers/invoice.controller";
 
 const router : Router = Router();
 
 const upload = multer({
     storage: multer.memoryStorage(),
-    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+    limits: { fileSize: 2 * 1024 * 1024 }, // 2MB
 });
 
-router.post("/", requireAuth, upload.single("file"), createInvoice);
+router.post("/upload-logo", requireAuth, upload.single("file"), uploadLogo);
+
+router.post("/", requireAuth, createInvoice);
+router.patch("/:id", requireAuth, updateInvoice);
+router.delete("/:id", requireAuth, deleteInvoice);
 router.get("/", requireAuth, getInvoices);
 
 export default router;
