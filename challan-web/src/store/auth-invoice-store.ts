@@ -16,6 +16,8 @@ interface AuthInvoiceState {
     activeInvoice: InvoiceFormValues;
     invoiceList: InvoiceHistoryItem[];
 
+    resetInvoiceKey: number;
+
     setActiveInvoice: (data: Partial<InvoiceFormValues>) => void;
     setInvoiceList: (list: InvoiceHistoryItem[]) => void;
     addInvoiceToList: (item: InvoiceHistoryItem) => void;
@@ -44,6 +46,8 @@ export const useAuthInvoiceStore = create<AuthInvoiceState>((set) => ({
     activeInvoice: DEFAULT_INVOICE,
     invoiceList: [],
 
+    resetInvoiceKey: 0,
+
     setActiveInvoice: (data) => set((state) => ({
         activeInvoice: { ...state.activeInvoice, ...data },
     })),
@@ -59,5 +63,9 @@ export const useAuthInvoiceStore = create<AuthInvoiceState>((set) => ({
         return { invoiceList: newList };
     }),
 
-    resetActiveInvoice: () => set({ activeInvoice: DEFAULT_INVOICE }),
+    resetActiveInvoice: () => 
+        set((state) => ({
+            activeInvoice: DEFAULT_INVOICE,
+            resetInvoiceKey: state.resetInvoiceKey + 1,
+        })),
 }));

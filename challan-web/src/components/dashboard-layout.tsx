@@ -1,7 +1,6 @@
 "use client";
 import { ReactNode, useEffect } from "react";
 import Link from "next/link";
-import LogoutButton from "@/components/logout-button";
 
 export function DashboardLayout({ children }: { children: ReactNode }) {
 

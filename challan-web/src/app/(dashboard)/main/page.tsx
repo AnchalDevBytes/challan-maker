@@ -54,7 +54,8 @@ export default function DashboardPage() {
         invoiceList, 
         setInvoiceList, 
         addInvoiceToList,
-        resetActiveInvoice 
+        resetActiveInvoice,
+        resetInvoiceKey 
     } = useAuthInvoiceStore();
 
     const form = useForm<InvoiceFormValues>({
@@ -166,6 +167,7 @@ export default function DashboardPage() {
             toast.error(error.message || "Failed to save invoice");
         } finally {
             setIsSaving(false);
+            handleResetMode();
         }
     };
 
@@ -225,12 +227,7 @@ export default function DashboardPage() {
                             <Button 
                                 variant={"ghost"} 
                                 size={"sm"} 
-                                onClick={() => {
-                                    setEditingId(null);
-                                    resetActiveInvoice();
-                                    reset(activeInvoice);
-                                    setLogoFile(null);
-                                }}
+                                onClick={handleResetMode}
                             >
                                 Cancel Edit
                             </Button>
@@ -240,6 +237,7 @@ export default function DashboardPage() {
                     <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 items-start">
                         <div className="space-y-4">
                             <InvoiceFormUI 
+                                key={resetInvoiceKey}
                                 form={form}
                                 logo={activeInvoice.logo}
                                 onLogoUpload={(base64, file) => {

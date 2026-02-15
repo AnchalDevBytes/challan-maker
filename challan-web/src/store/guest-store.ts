@@ -39,13 +39,6 @@ export const useGuestStore = create<GuestState>()(
     persist(
         (set) => ({
             currentDraft: DEFAULT_INVOICE,
-
-            uiSettings: {
-                showTax: false,
-                showDiscount: false,
-                showShipping: false,
-                showBankDetails: false
-            },
             resetKey: 0,
 
             setDraft: (data) => 
@@ -56,7 +49,6 @@ export const useGuestStore = create<GuestState>()(
             resetDraft: () => 
                 set((state) => ({ 
                     currentDraft: DEFAULT_INVOICE,
-                    uiSettings: { showTax: false, showDiscount: false, showShipping: false, showBankDetails: false },
                     resetKey: state.resetKey + 1 
                 })),
 
