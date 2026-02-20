@@ -6,10 +6,9 @@
     "outDir": "./dist",
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
-    "module": "ESNext",
-    "moduleResolution": "bundler",
+    "module": "CommonJS",
+    "moduleResolution": "Node",
     "target": "ES2023",
-    "types": [],
     "esModuleInterop": true,
     // "ignoreDeprecations": "6.0",
     // For nodejs:
@@ -33,10 +32,10 @@
     // Recommended Options
     "strict": true,
     "jsx": "react-jsx",
-    "verbatimModuleSyntax": true,
+    "verbatimModuleSyntax": false,
     "isolatedModules": true,
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
-    "skipLibCheck": true,
+    "skipLibCheck": true
   }
 }
