@@ -1,24 +1,43 @@
 import type { Response } from "express";
 
-export const setAuthCookies = (res: Response, accessToken: string, refreshToken: string) => {
-    const isProduction = process.env.NODE_ENV === "production";
+export const setAuthCookies = (
+  res: Response,
+  accessToken: string,
+  refreshToken: string,
+) => {
+  const isProduction = process.env.NODE_ENV === "production";
 
-    res.cookie("accessToken", accessToken, {
-        httpOnly: true,
-        secure: isProduction,
-        sameSite: "strict",
-        maxAge: 15 * 60 * 1000
-    });
+  res.cookie("accessToken", accessToken, {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: isProduction ? ("none" as const) : ("lax" as const),
+    path: "/",
+    maxAge: 15 * 60 * 1000,
+  });
 
-    res.cookie("refreshToken", refreshToken, {
-        httpOnly: true,
-        secure: isProduction,
-        sameSite: "strict",
-        maxAge: 7 * 24 * 60 * 60 * 1000
-    });
-}
+  res.cookie("refreshToken", refreshToken, {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: isProduction ? ("none" as const) : ("lax" as const),
+    path: "/",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
+};
 
 export const clearAuthCookies = (res: Response) => {
-    res.clearCookie("accessToken");
-    res.clearCookie("refreshToken");
+  const isProduction = process.env.NODE_ENV === "production";
+
+  res.clearCookie("accessToken", {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: isProduction ? ("none" as const) : ("lax" as const),
+    path: "/",
+  });
+
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: isProduction ? ("none" as const) : ("lax" as const),
+    path: "/",
+  });
 };
