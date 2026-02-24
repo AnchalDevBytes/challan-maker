@@ -1,7 +1,7 @@
 "use client";
-
 import api from "@/lib/api";
 import { cn } from "@/lib/utils";
+import { setSessionCookie } from "@/lib/session";
 import { useAuthStore } from "@/store/auth-store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useGoogleLogin } from "@react-oauth/google";
@@ -39,6 +39,10 @@ const Login = () => {
       const userData = response.data.data.user;
       setUser(userData);
 
+      // Write the session flag on the frontend (Vercel) domain so the
+      // Next.js middleware can detect the authenticated state.
+      setSessionCookie();
+
       toast.success(response.data.message || "Welcome back!");
       setTimeout(() => {
         router.push("/main");
@@ -57,6 +61,8 @@ const Login = () => {
 
         const userData = response.data.data.user;
         setUser(userData);
+
+        setSessionCookie();
 
         toast.success(response.data.message || "Login successful");
         router.push("/main");
