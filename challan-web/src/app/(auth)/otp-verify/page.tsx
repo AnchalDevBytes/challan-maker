@@ -123,7 +123,7 @@ const OtpVerify = ({ length = 6 }: { length?: number }) => {
 
   return (
     <div className="min-h-screen w-full bg-neutral-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-100 bg-white rounded-xl shadow-lg border border-neutral-200 overflow-hidden">
+      <div className="w-full max-w-100 sm:bg-white sm:rounded-xl sm:shadow-lg sm:border sm:border-neutral-200 overflow-hidden">
         <div className="p-10 pb-8 flex flex-col items-center">
           <h2 className="text-xl font-bold text-neutral-900 text-center">
             Check your email
@@ -154,7 +154,7 @@ const OtpVerify = ({ length = 6 }: { length?: number }) => {
                   onKeyDown={(e) => handleKeyDown(index, e)}
                   onPaste={handlePaste}
                   className={cn(
-                    "flex w-12 h-12 border border-neutral-200 text-neutral-800 dark:border-neutral-700 rounded-md bg-transparent px-3 py-2 text-center text-sm font-semibold shadow-sm transition-all outline-none",
+                    "flex w-10 h-10 sm:w-12 sm:h-12 border border-neutral-200 text-neutral-800 dark:border-neutral-700 rounded-md bg-transparent px-3 py-2 text-center text-sm font-semibold shadow-sm transition-all outline-none",
                     "focus:border-blue dark:focus:border-blue focus:ring-1 focus:ring-blue dark:focus:ring-blue",
                     "disabled:cursor-not-allowed disabled:opacity-50",
                   )}

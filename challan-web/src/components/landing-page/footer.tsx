@@ -24,12 +24,10 @@ const Footer = () => {
 
   return (
     <footer className="relative bg-white border-t border-neutral-100 pt-20 pb-8 overflow-hidden">
-      {/* Subtle top-edge glow — replaced the heavy blue blob with an extremely faint neutral vignette */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2/3 h-px bg-linear-to-r from-transparent via-neutral-200 to-transparent" />
 
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12 mb-16">
-          {/* Brand column */}
           <div className="col-span-1 md:col-span-4 space-y-6">
             <Link
               href="#hero-section"
@@ -68,7 +66,6 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Product links */}
           <div className="col-span-1 md:col-span-2">
             <p className="text-[11px] font-bold text-neutral-400 uppercase tracking-widest mb-6">
               Product
@@ -81,7 +78,6 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Company links */}
           <div className="col-span-1 md:col-span-2">
             <p className="text-[11px] font-bold text-neutral-400 uppercase tracking-widest mb-6">
               Company
@@ -94,7 +90,6 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Newsletter card */}
           <div className="col-span-1 md:col-span-4">
             <p className="text-[11px] font-bold text-neutral-400 uppercase tracking-widest mb-6">
               Stay Professional
@@ -138,15 +133,9 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Bottom bar */}
-        <div className="pt-6 border-t border-neutral-100 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-neutral-400 font-figtree">
-            © {currentYear} Challan Maker. All rights reserved.
-          </p>
-          <p className="text-xs text-neutral-300 font-figtree tracking-wide uppercase">
-            Made with care in India
-          </p>
-        </div>
+        <p className="flex items-center justify-center pt-6 border-t border-neutral-100 text-sm text-neutral-400 font-figtree">
+          © {currentYear} Challan Maker. All rights reserved.
+        </p>
       </div>
     </footer>
   );

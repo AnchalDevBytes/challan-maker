@@ -1,5 +1,5 @@
 "use client";
-import { Check, Clock, Sparkles, User, UserCheck } from "lucide-react";
+import { Bell, Check, Clock, Sparkles, User, UserCheck } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { motion } from "motion/react";
@@ -167,7 +167,8 @@ const Pricing = () => {
                     type="submit"
                     className="h-11 px-4 rounded-xl bg-blue text-white text-sm font-semibold hover:bg-dark-blue transition-all active:scale-95 whitespace-nowrap shadow-sm"
                   >
-                    Notify Me
+                    <span className="hidden sm:inline">Notify Me</span>
+                    <Bell className="w-4 h-4 sm:hidden" />
                   </button>
                 </form>
               ) : (

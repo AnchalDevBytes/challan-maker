@@ -65,7 +65,7 @@ const Signup = () => {
 
   return (
     <div className="min-h-screen w-full bg-neutral-50 flex items-center justify-center">
-      <div className="w-full max-w-100 bg-white rounded-xl shadow-lg border border-neutral-200 overflow-hidden">
+      <div className="w-full max-w-100 sm:bg-white sm:rounded-xl sm:shadow-lg sm:border sm:border-neutral-200 overflow-hidden">
         <div className="p-8 pb-6">
           <h2 className="text-2xl font-bold text-neutral-900 text-center">
             Create your account
