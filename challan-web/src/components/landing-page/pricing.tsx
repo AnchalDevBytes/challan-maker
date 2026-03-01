@@ -1,30 +1,49 @@
 "use client";
-import { CheckCircle2, Clock, Sparkles, User, UserCheck } from "lucide-react";
+import { Check, Clock, Sparkles, User, UserCheck } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
 
 const Pricing = () => {
+  const [email, setEmail] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleNotify = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (email.trim()) {
+      setSubmitted(true);
+    }
+  };
+
   return (
     <section
       id="pricing"
-      className="relative overflow-hidden py-20 md:py-32 bg-white"
+      className="relative overflow-hidden py-28 md:py-40 bg-white"
     >
       <div className="container relative max-w-7xl mx-auto z-10 px-6">
-        <div className="text-center mb-10 md:mb-16 relative">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-32 bg-blue-200/60 blur-[100px] rounded-full -z-10" />
+        <div className="text-center mb-12 md:mb-20">
+          <motion.p
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.4 }}
+            className="text-[11px] font-bold uppercase tracking-widest text-blue mb-4"
+          >
+            ✦ Simple Pricing
+          </motion.p>
 
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-3xl md:text-4xl tracking-tighter leading-[1.2] px-2 font-medium text-neutral-900 mb-2 md:mb-4 font-source-serif z-10"
+            transition={{ duration: 0.5, delay: 0.05 }}
+            className="text-3xl md:text-4xl tracking-[-0.03em] leading-[1.15] font-medium text-neutral-900 mb-4 font-source-serif"
           >
             Simple, transparent pricing
           </motion.h2>
-          <p className="text-sm  md:text-base text-neutral-500 max-w-2xl mx-auto font-figtree">
+          <p className="text-sm md:text-base text-neutral-500 max-w-2xl mx-auto font-figtree">
             No hidden fees. Upgrade or downgrade as your business needs change.
           </p>
         </div>
@@ -91,15 +110,17 @@ const Pricing = () => {
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="group p-8 rounded-3xl border border-blue-100 bg-linear-to-b from-blue-50/50 to-white relative overflow-hidden flex flex-col shadow-xl shadow-blue-100/20"
+            className="group p-8 rounded-3xl border border-blue-100 bg-linear-to-b from-[#EFF6FF] to-white relative overflow-hidden flex flex-col shadow-xl shadow-blue-100/30"
           >
-            <div className="absolute top-0 right-0 bg-blue text-white text-xs font-bold px-3 py-1 rounded-bl-xl">
-              Coming Soon
+            <div className="flex mb-6">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-blue/20 bg-blue-50 text-[11px] font-bold text-blue uppercase tracking-wider">
+                <Clock className="w-3 h-3" /> Coming Soon
+              </span>
             </div>
 
             <div className="mb-8">
               <h3 className="text-3xl font-medium font-source-serif text-dark-blue mb-1 flex items-center gap-2">
-                Premium <Sparkles className="w-4 h-4 text-green-600" />
+                Premium <Sparkles className="w-4 h-4 text-blue" />
               </h3>
               <p className="text-neutral-500 text-sm">
                 The ultimate tool for scaling.
@@ -108,7 +129,7 @@ const Pricing = () => {
 
             <div className="space-y-6 grow">
               <div className="flex items-baseline gap-1">
-                <span className="text-3xl font-medium text-green-600">
+                <span className="text-3xl font-medium text-dark-blue">
                   ₹100
                 </span>
                 <span className="text-neutral-400 font-medium">/month</span>
@@ -124,20 +145,46 @@ const Pricing = () => {
               </ul>
             </div>
 
-            {/* Disabled State Interaction */}
-            <div className="mt-10 relative">
+            <div className="mt-10 space-y-3">
               <Button
                 disabled
-                className="w-full h-14 rounded-2xl bg-neutral-100 text-neutral-400 border-none text-lg font-bold cursor-not-allowed"
+                className="w-full h-14 rounded-2xl bg-neutral-100 text-neutral-400 border-none text-base font-bold cursor-not-allowed"
               >
                 Coming Soon
               </Button>
-              <p className="text-center text-[10px] font-bold text-neutral-400 mt-3 uppercase tracking-widest">
-                We will notify you when we launch
+
+              {!submitted ? (
+                <form onSubmit={handleNotify} className="flex gap-2">
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="your@email.com"
+                    required
+                    className="flex-1 h-11 px-4 rounded-xl border border-neutral-200 text-sm text-neutral-700 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-blue/20 focus:border-blue/40 transition-all bg-white"
+                  />
+                  <button
+                    type="submit"
+                    className="h-11 px-4 rounded-xl bg-blue text-white text-sm font-semibold hover:bg-dark-blue transition-all active:scale-95 whitespace-nowrap shadow-sm"
+                  >
+                    Notify Me
+                  </button>
+                </form>
+              ) : (
+                <div className="flex items-center justify-center gap-2 h-11 rounded-xl bg-green-50 border border-green-100">
+                  <Check className="w-4 h-4 text-green-600" />
+                  <span className="text-sm font-semibold text-green-700">
+                    We&apos;ll notify you on launch!
+                  </span>
+                </div>
+              )}
+
+              <p className="text-center text-[10px] font-bold text-neutral-400 uppercase tracking-widest">
+                Be the first to know when we launch
               </p>
             </div>
 
-            {/* background pattern for Premium */}
+            {/* Background pattern for Premium */}
             <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[radial-gradient(#2563eb_1.5px,transparent_1.5px)] bg-size:[24px_24px] -z-10" />
           </motion.div>
         </div>
@@ -164,10 +211,10 @@ const FeatureItem = ({
       lg && "text-neutral-800",
     )}
   >
-    <CheckCircle2
+    <Check
       className={cn(
         "shrink-0",
-        lg ? "w-5 h-5" : "w-4 h-4",
+        lg ? "w-4 h-4" : "w-4 h-4",
         active ? "text-blue" : "text-neutral-300",
       )}
     />
