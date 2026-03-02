@@ -52,7 +52,6 @@ export default function InvoicePreview({ data, removeBranding }: PreviewProps) {
   const total = subTotal + taxAmount + shippingAmount - discountAmount;
 
   return (
-    /* Outer container measures available width */
     <div ref={containerRef} className="w-full">
       {/* Scaled wrapper — height collapses to match scaled doc */}
       <div

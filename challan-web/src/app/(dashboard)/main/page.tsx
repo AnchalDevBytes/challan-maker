@@ -24,6 +24,7 @@ import { DashboardLayout } from "@/components/dashboard-layout";
 import InvoicePreview from "@/components/invoice/invoice-preview";
 import { AuthBottomNav } from "@/components/auth-bottom-nav";
 import { useAuthStore } from "@/store/auth-store";
+import PreviewTabSwitcher from "@/components/preview-tab-switcher";
 
 const DEFAULT_INVOICE_VALUES: InvoiceFormValues = {
   invoiceNumber: "",
@@ -150,11 +151,13 @@ export default function DashboardPage() {
         );
         setInvoiceList(updateList);
         toast.success("Invoice updated successfully");
+        handleResetMode();
       } else {
         const res = await InvoiceApi.createInvoice(data);
         savedInvoice = res.invoice;
         addInvoiceToList(savedInvoice);
         toast.success("Invoice created successfully");
+        handleResetMode();
       }
 
       const blob = await pdf(
@@ -185,7 +188,6 @@ export default function DashboardPage() {
       toast.error(error.message || "Failed to save invoice");
     } finally {
       setIsSaving(false);
-      handleResetMode();
     }
   };
 
@@ -263,33 +265,10 @@ export default function DashboardPage() {
             )}
           </div>
 
-          {/* Mobile Form / Preview tab switcher */}
-          <div className="xl:hidden">
-            <div className="flex gap-1 bg-neutral-100 p-1 rounded-xl max-w-xs">
-              <button
-                onClick={() => setMobilePreviewTab("form")}
-                className={cn(
-                  "flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs font-semibold transition-all",
-                  mobilePreviewTab === "form"
-                    ? "bg-white text-dark-blue shadow-sm"
-                    : "text-neutral-500 hover:text-neutral-700",
-                )}
-              >
-                <FileText className="w-3.5 h-3.5" /> Form
-              </button>
-              <button
-                onClick={() => setMobilePreviewTab("preview")}
-                className={cn(
-                  "flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs font-semibold transition-all",
-                  mobilePreviewTab === "preview"
-                    ? "bg-white text-dark-blue shadow-sm"
-                    : "text-neutral-500 hover:text-neutral-700",
-                )}
-              >
-                <Eye className="w-3.5 h-3.5" /> Preview
-              </button>
-            </div>
-          </div>
+          <PreviewTabSwitcher
+            mobilePreviewTab={mobilePreviewTab}
+            setMobilePreviewTab={setMobilePreviewTab}
+          />
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start pb-10">
             <div

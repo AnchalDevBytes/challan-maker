@@ -59,20 +59,27 @@ export function InvoiceFormUI({
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
-  const watchedItems = watch("items");
+  const [
+    watchedItems,
+    watchedTaxRate,
+    watchedDiscount,
+    watchedShipping,
+    currency,
+  ] = watch(["items", "taxRate", "discount", "shipping", "currency"]);
+
   const subTotal =
     watchedItems?.reduce(
-      (sum, item) => sum + Number(item.quantity) * Number(item.unitPrice),
+      (sum: any, item: any) =>
+        sum + Number(item.quantity) * Number(item.unitPrice),
       0,
     ) || 0;
 
-  const taxRate = Number(watch("taxRate") || 0);
-  const discount = Number(watch("discount") || 0);
-  const shipping = Number(watch("shipping") || 0);
+  const taxRate = Number(watchedTaxRate) || 0;
+  const discount = Number(watchedDiscount) || 0;
+  const shipping = Number(watchedShipping) || 0;
 
   const taxAmount = (subTotal * taxRate) / 100;
   const grandTotal = subTotal + taxAmount + shipping - discount;
-  const currency = watch("currency");
 
   return (
     <Card className="w-full sm:bg-white sm:shadow-sm sm:border-neutral-200 overflow-hidden">
@@ -233,7 +240,6 @@ export function InvoiceFormUI({
           </div>
         </div>
 
-        {/* Items — horizontally scrollable table, single layout */}
         <div>
           <h3 className="text-sm font-semibold text-neutral-900 mb-4">
             <span>Items</span>
