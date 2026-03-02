@@ -124,8 +124,32 @@ export default function DashboardPage() {
     setLogoFile(null);
   };
 
+  const triggerPdfDownload = (data: InvoiceFormValues) => {
+    // Deferred off the main thread so UI updates (toast, isSaving) paint first
+    setTimeout(async () => {
+      try {
+        const blob = await pdf(
+          <SimpleMinimalTemplate data={data} removeBranding={true} />,
+        ).toBlob();
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `invoice-${data.invoiceNumber}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      } catch (err) {
+        console.error("PDF generation failed:", err);
+        toast.error("PDF download failed. Please try again.");
+      }
+    }, 100);
+  };
+
   const handleSave = async () => {
     setIsSaving(true);
+    // Capture snapshot of form data before any async work
+    const data = form.getValues();
     try {
       const isValid = await form.trigger();
       if (!isValid) {
@@ -133,7 +157,6 @@ export default function DashboardPage() {
         return;
       }
 
-      const data = form.getValues();
       if (logoFile) {
         toast.info("Uploading logo...");
         const logoUrl = await InvoiceApi.uploadLogo(logoFile);
@@ -145,44 +168,24 @@ export default function DashboardPage() {
       if (editingId) {
         const res = await InvoiceApi.updateInvoice(editingId, data);
         savedInvoice = res.invoice;
-
         const updateList = invoiceList.map((i) =>
           i.id === editingId ? savedInvoice : i,
         );
         setInvoiceList(updateList);
         toast.success("Invoice updated successfully");
-        handleResetMode();
       } else {
         const res = await InvoiceApi.createInvoice(data);
         savedInvoice = res.invoice;
         addInvoiceToList(savedInvoice);
         toast.success("Invoice created successfully");
-        handleResetMode();
       }
 
-      const blob = await pdf(
-        <SimpleMinimalTemplate data={data} removeBranding={true} />,
-      ).toBlob();
+      // Reset form immediately — PDF generation happens in the background
+      handleResetMode();
+      reset(DEFAULT_INVOICE_VALUES);
 
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `invoice-${data.invoiceNumber}.pdf`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
-
-      if (!editingId) {
-        resetActiveInvoice();
-        reset(activeInvoice);
-        setLogoFile(null);
-      } else {
-        setEditingId(null);
-        resetActiveInvoice();
-        reset(activeInvoice);
-        setLogoFile(null);
-      }
+      // Kick off PDF download without blocking the UI
+      triggerPdfDownload(data);
     } catch (error: any) {
       console.error(error);
       toast.error(error.message || "Failed to save invoice");
