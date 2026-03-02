@@ -46,21 +46,13 @@ export const createInvoice = async (
 
     const result = await InvoiceService.createInvoice(userId, bodyData);
 
-    if (result.deleteInvoiceId) {
-      return {
-        message: `Invoice created successfully. Oldest invoice (ID: ${result.deleteInvoiceId}) deleted to maintain limit of 5 invoices.`,
-      };
-    }
+    const message = result.deleteInvoiceId
+      ? `Invoice created. Oldest invoice deleted to maintain the 5-invoice limit.`
+      : "Invoice created successfully";
 
     res
       .status(201)
-      .json(
-        new ApiResponse(
-          201,
-          { invoice: result.invoice },
-          "Invoice created successfully",
-        ),
-      );
+      .json(new ApiResponse(201, { invoice: result.invoice }, message));
   } catch (error) {
     next(error);
   }
