@@ -5,13 +5,19 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { pdf } from "@react-pdf/renderer";
 import { toast } from "sonner";
-import { Loader2, FileText, Edit, Eye, Trash2 } from "lucide-react";
+import {
+  Loader2,
+  FileText,
+  Edit,
+  Eye,
+  Trash2,
+  History,
+  Receipt,
+} from "lucide-react";
 import { InvoiceFormUI } from "@/components/invoice/invoice-form-ui";
 import { SimpleMinimalTemplate } from "@/components/invoice/templates/simple-minimal";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { InvoiceApi } from "@/services/invoice-api";
 import { invoiceSchema, InvoiceFormValues } from "@/schemas/invoice.schema";
@@ -298,103 +304,146 @@ export default function DashboardPage() {
           </div>
         </TabsContent>
 
-        <TabsContent value="history">
-          <Card>
-            <CardContent className="p-6">
-              {isLoadingHistory ? (
-                <div className="flex flex-col items-center justify-center py-12 text-neutral-400">
-                  <Loader2 className="w-8 h-8 animate-spin mb-2" />
-                  <p>Loading invoices...</p>
-                </div>
-              ) : invoiceList.length === 0 ? (
-                <div className="text-center py-12 text-neutral-500">
-                  <FileText className="w-12 h-12 mx-auto mb-3 opacity-20" />
-                  <p>No invoices found. Create your first one!</p>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {invoiceList.map((inv) => {
-                    const dateObj = inv.createdAt
-                      ? new Date(inv.createdAt)
-                      : null;
-                    const dateString =
-                      dateObj && !isNaN(dateObj.getTime())
-                        ? format(dateObj, "dd MMM yyyy")
-                        : "N/A";
-                    return (
-                      <div
-                        key={inv.id}
-                        className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border rounded-lg hover:bg-neutral-50 transition-colors gap-4"
-                      >
-                        <div className="flex items-start gap-4">
-                          <div className="h-10 w-10 bg-blue-50 text-blue rounded-full flex items-center justify-center shrink-0">
-                            <FileText className="w-5 h-5" />
-                          </div>
-                          <div>
-                            <div className="flex items-center gap-2">
-                              <span className="font-semibold text-neutral-900">
-                                {inv.invoiceNumber}
-                              </span>
-                              <Badge
-                                variant="outline"
-                                className="text-[10px] px-1.5 h-5 text-neutral-500"
-                              >
-                                {inv.status}
-                              </Badge>
-                            </div>
-                            <p className="text-sm text-neutral-500">
-                              {inv.customerName}
-                            </p>
-                            <p className="text-xs text-neutral-400 mt-1">
-                              {dateString}
-                            </p>
-                          </div>
-                        </div>
+        <TabsContent
+          value="history"
+          className="pb-10  w-full max-w-5xl mx-auto"
+        >
+          <div className="flex items-center justify-between mb-10 lg:mb-14 mt-2">
+            <div className="flex items-center gap-2.5">
+              <div className="h-8 w-8 rounded-xl bg-linear-to-br from-dark-blue to-blue flex items-center justify-center shadow-sm">
+                <History className="w-4 h-4 text-white" />
+              </div>
+              <div>
+                <h2 className="text-base font-semibold text-neutral-900 leading-tight">
+                  Invoice History
+                </h2>
+                <p className="text-xs text-neutral-400 leading-tight">
+                  Your saved & generated invoices
+                </p>
+              </div>
+            </div>
+            {invoiceList.length > 0 && (
+              <span className="text-xs font-medium bg-neutral-100 text-neutral-500 px-2.5 py-1 rounded-full">
+                {invoiceList.length}{" "}
+                {invoiceList.length === 1 ? "invoice" : "invoices"}
+              </span>
+            )}
+          </div>
 
-                        <div className="flex items-center gap-4 sm:text-right">
-                          <div className="mr-4">
-                            <p className="font-bold text-neutral-900">
-                              {new Intl.NumberFormat("en-IN", {
-                                style: "currency",
-                                currency: "INR",
-                              }).format(Number(inv.totalAmount))}
-                            </p>
-                          </div>
+          {isLoadingHistory ? (
+            <div className="flex flex-col items-center justify-center py-16 text-neutral-400">
+              <Loader2 className="w-7 h-7 animate-spin mb-3" />
+              <p className="text-sm font-medium">Loading invoices…</p>
+            </div>
+          ) : invoiceList.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-16 text-neutral-400">
+              <div className="h-16 w-16 rounded-2xl bg-neutral-50 border border-neutral-100 flex items-center justify-center mb-4">
+                <Receipt className="w-8 h-8 opacity-30" />
+              </div>
+              <p className="font-medium text-sm text-neutral-500">
+                No invoices yet
+              </p>
+              <p className="text-xs text-neutral-400 mt-1">
+                Create your first invoice to see it here
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-2.5">
+              {invoiceList.map((inv) => {
+                const dateObj = inv.createdAt ? new Date(inv.createdAt) : null;
+                const dateString =
+                  dateObj && !isNaN(dateObj.getTime())
+                    ? format(dateObj, "dd MMM yyyy")
+                    : "N/A";
 
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleEdit(inv)}
-                            title="Edit"
-                          >
-                            <Edit className="w-4 h-4 text-blue" />
-                          </Button>
+                const statusStyles: Record<string, string> = {
+                  PAID: "bg-emerald-50 text-emerald-600 border-emerald-100",
+                  DRAFT: "bg-slate-50 text-slate-500 border-slate-100",
+                  PENDING: "bg-amber-50 text-amber-600 border-amber-100",
+                  OVERDUE: "bg-red-50 text-red-600 border-red-100",
+                };
+                const statusClass =
+                  statusStyles[inv.status] ??
+                  "bg-neutral-50 text-neutral-500 border-neutral-100";
 
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleViewPDF(inv)}
-                            title="View PDF"
-                          >
-                            <Eye className="w-4 h-4 text-neutral-600" />
-                          </Button>
-
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleDelete(inv.id)}
-                            title="Delete"
-                          >
-                            <Trash2 className="w-4 h-4 text-red-500 hover:text-red-700" />
-                          </Button>
-                        </div>
+                return (
+                  <div
+                    key={inv.id}
+                    className="group flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-3 py-3 sm:px-4 sm:py-3.5 border border-blue/30 bg-blue/2 sm:border-neutral-200 rounded-xl sm:hover:border-blue/30 sm:hover:bg-blue/2 sm:hover:shadow-sm transition-all duration-200"
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="h-9 w-9 rounded-xl bg-linear-to-br from-dark-blue to-blue flex items-center justify-center shrink-0 shadow-sm">
+                        <FileText className="w-4 h-4 text-white" />
                       </div>
-                    );
-                  })}
-                </div>
-              )}
-            </CardContent>
-          </Card>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="font-semibold text-sm text-neutral-900 truncate">
+                            {inv.invoiceNumber}
+                          </span>
+                          <span
+                            className={cn(
+                              "text-[10px] font-medium px-1.5 py-0.5 rounded-md border capitalize leading-none",
+                              statusClass,
+                            )}
+                          >
+                            {inv.status}
+                          </span>
+                        </div>
+                        <p className="text-xs text-neutral-500 truncate mt-0.5">
+                          {inv.customerName}
+                        </p>
+                        <p className="text-[10px] text-neutral-400 mt-0.5">
+                          {dateString}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Right — amount + actions */}
+                    <div className="flex items-center justify-between sm:justify-end gap-2 sm:gap-3 pl-12 sm:pl-0">
+                      <p className="font-bold text-sm text-neutral-900 tabular-nums">
+                        {new Intl.NumberFormat("en-IN", {
+                          style: "currency",
+                          currency: "INR",
+                        }).format(Number(inv.totalAmount))}
+                      </p>
+
+                      <div className="flex items-center gap-0.5">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleEdit(inv)}
+                          title="Edit"
+                          className="h-8 w-8 rounded-lg text-neutral-400 hover:text-blue hover:bg-blue/10"
+                        >
+                          <Edit className="w-3.5 h-3.5" />
+                        </Button>
+
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleViewPDF(inv)}
+                          title="View PDF"
+                          className="h-8 w-8 rounded-lg text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100"
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                        </Button>
+
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleDelete(inv.id)}
+                          title="Delete"
+                          className="h-8 w-8 rounded-lg text-neutral-400 hover:text-red-600 hover:bg-red-50"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </TabsContent>
       </Tabs>
 
