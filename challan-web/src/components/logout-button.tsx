@@ -45,7 +45,7 @@ const LogoutButton = ({ className }: { className?: string }) => {
       className={cn(
         "flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all",
         "bg-white border border-neutral-200 text-neutral-700 hover:bg-neutral-50 hover:text-red-600 hover:border-red-200",
-        "disabled:opacity-50 disabled:cursor-not-allowed",
+        "disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer",
         className,
       )}
     >

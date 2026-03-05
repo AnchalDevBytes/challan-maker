@@ -85,10 +85,10 @@ export function AuthBottomNav({
               </div>
 
               <div className="grid gap-2">
-                <Link href="/pricing" className="w-full">
+                <Link href="#" className="w-full disabled cursor-not-allowed">
                   <Button
                     size="sm"
-                    className="w-full justify-center bg-linear-to-r from-dark-blue via-blue to-dark-blue border-0 h-9 cursor-pointer"
+                    className="w-full justify-center bg-linear-to-r from-dark-blue via-blue to-dark-blue border-0 h-9"
                   >
                     Buy Premium
                   </Button>

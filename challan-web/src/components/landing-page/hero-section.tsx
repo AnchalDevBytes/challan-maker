@@ -90,13 +90,13 @@ const HeroSection = () => {
               className="flex flex-wrap gap-6 items-center justify-center"
             >
               <Link href="/guest">
-                <button className="bg-blue text-white px-8 py-4 rounded-xl font-bold hover:bg-dark-blue transition-all active:scale-95 shadow-xl shadow-blue/20">
+                <button className="bg-blue text-white px-8 py-4 rounded-xl font-bold hover:bg-dark-blue transition-all active:scale-95 shadow-xl shadow-blue/20 cursor-pointer">
                   Start your free trial
                 </button>
               </Link>
               <Link
                 href="/login"
-                className="group flex items-center gap-2 font-bold text-neutral-900 hover:text-neutral-600 transition-colors"
+                className="group flex items-center gap-2 font-bold text-neutral-900 hover:text-neutral-600 transition-colors cursor-pointer"
               >
                 View role based demos
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />

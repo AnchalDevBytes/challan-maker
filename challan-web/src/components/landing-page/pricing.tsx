@@ -161,11 +161,11 @@ const Pricing = () => {
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="your@email.com"
                     required
-                    className="flex-1 h-11 px-4 rounded-xl border border-neutral-200 text-sm text-neutral-700 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-blue/20 focus:border-blue/40 transition-all bg-white"
+                    className="flex-1 h-11 px-4 rounded-xl border border-neutral-200 text-sm text-neutral-700 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-blue/20 focus:border-blue/40 transition-all bg-white cursor-pointer"
                   />
                   <button
                     type="submit"
-                    className="h-11 px-4 rounded-xl bg-blue text-white text-sm font-semibold hover:bg-dark-blue transition-all active:scale-95 whitespace-nowrap shadow-sm"
+                    className="h-11 px-4 rounded-xl bg-blue text-white text-sm font-semibold hover:bg-dark-blue transition-all active:scale-95 whitespace-nowrap shadow-sm cursor-pointer"
                   >
                     <span className="hidden sm:inline">Notify Me</span>
                     <Bell className="w-4 h-4 sm:hidden" />

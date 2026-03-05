@@ -39,7 +39,7 @@ const Navbar = () => {
               <Link
                 key={link.name}
                 href={link.href}
-                className="hover:text-blue transition-colors"
+                className="hover:text-blue transition-colors cursor-pointer"
               >
                 {link.name}
               </Link>
@@ -55,7 +55,7 @@ const Navbar = () => {
               <Link href="/login" className="hidden md:block">
                 <Button
                   variant="ghost"
-                  className="text-neutral-600 hover:text-blue font-figtree"
+                  className="text-neutral-600 hover:text-blue font-figtree cursor-pointer"
                 >
                   Login
                 </Button>
@@ -63,7 +63,7 @@ const Navbar = () => {
             )}
 
             <Link href="/guest" className="hidden md:block">
-              <Button className="bg-blue hover:bg-dark-blue text-white shadow-lg transition-all shadow-dark-blue/40 px-4 sm:px-6 rounded-xl active:scale-95 text-xs sm:text-sm">
+              <Button className="bg-blue hover:bg-dark-blue text-white shadow-lg transition-all shadow-dark-blue/40 px-4 sm:px-6 rounded-xl active:scale-95 text-xs sm:text-sm cursor-pointer">
                 Get Started
               </Button>
             </Link>
@@ -110,7 +110,7 @@ const Navbar = () => {
                       key={link.name}
                       href={link.href}
                       onClick={() => setIsOpen(false)}
-                      className="text-lg font-bold text-neutral-700 hover:text-blue flex items-center justify-between group transition-colors px-2 py-1"
+                      className="text-lg font-bold text-neutral-700 hover:text-blue flex items-center justify-between group transition-colors px-2 py-1 cursor-pointer"
                     >
                       {link.name}
                       <ArrowRight className="w-5 h-5 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
@@ -127,7 +127,7 @@ const Navbar = () => {
                     <Link href="/login" onClick={() => setIsOpen(false)}>
                       <Button
                         variant="outline"
-                        className="w-full h-14 rounded-2xl text-lg font-bold border-neutral-200 text-neutral-700"
+                        className="w-full h-14 rounded-2xl text-lg font-bold border-neutral-200 text-neutral-700 cursor-pointer"
                       >
                         Login
                       </Button>
@@ -135,7 +135,7 @@ const Navbar = () => {
                   )}
 
                   <Link href="/guest" onClick={() => setIsOpen(false)}>
-                    <Button className="w-full h-14 bg-blue hover:bg-dark-blue text-white shadow-xl shadow-blue/20 rounded-2xl text-lg font-bold">
+                    <Button className="w-full h-14 bg-blue hover:bg-dark-blue text-white shadow-xl shadow-blue/20 rounded-2xl text-lg font-bold cursor-pointer">
                       Get Started
                     </Button>
                   </Link>

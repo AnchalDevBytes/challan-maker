@@ -125,7 +125,6 @@ export default function DashboardPage() {
   };
 
   const triggerPdfDownload = (data: InvoiceFormValues) => {
-    // Deferred off the main thread so UI updates (toast, isSaving) paint first
     setTimeout(async () => {
       try {
         const blob = await pdf(
@@ -148,7 +147,6 @@ export default function DashboardPage() {
 
   const handleSave = async () => {
     setIsSaving(true);
-    // Capture snapshot of form data before any async work
     const data = form.getValues();
     try {
       const isValid = await form.trigger();
@@ -180,11 +178,9 @@ export default function DashboardPage() {
         toast.success("Invoice created successfully");
       }
 
-      // Reset form immediately — PDF generation happens in the background
       handleResetMode();
       reset(DEFAULT_INVOICE_VALUES);
 
-      // Kick off PDF download without blocking the UI
       triggerPdfDownload(data);
     } catch (error: any) {
       console.error(error);

@@ -117,7 +117,7 @@ const Footer = () => {
                   />
                   <button
                     type="submit"
-                    className="bg-blue text-white p-2.5 rounded-xl hover:bg-dark-blue transition-colors active:scale-95 shrink-0"
+                    className="bg-blue text-white p-2.5 rounded-xl hover:bg-dark-blue transition-colors active:scale-95 shrink-0 cursor-pointer"
                   >
                     <ArrowUpRight className="w-5 h-5" />
                   </button>
