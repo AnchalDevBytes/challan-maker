@@ -2,7 +2,7 @@
 import { FileText, Menu, X, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { useAuthStore } from "@/store/auth-store";
 import LogoutButton from "@/components/logout-button";
@@ -11,6 +11,14 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { user } = useAuthStore();
   const toggleMenu = () => setIsOpen(!isOpen);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) setIsOpen(false);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const navLinks = [
     { name: "Features", href: "#features" },
