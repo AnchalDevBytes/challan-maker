@@ -22,7 +22,7 @@ export const AuthServerNotice = ({ className = "" }: AuthServerNoticeProps) => {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: -16, scale: 0.97 }}
           transition={{ duration: 0.28, ease: "easeOut" }}
-          className={`fixed top-3 sm:top-4 left-0 right-0 z-[100] mx-auto w-[calc(100%-2rem)] max-w-lg pointer-events-auto ${className}`}
+          className={`fixed top-3 sm:top-4 left-0 right-0 z-100 mx-auto w-[calc(100%-2rem)] max-w-lg pointer-events-auto ${className}`}
         >
           <div className="relative overflow-hidden rounded-2xl border border-neutral-200/90 border-l-4 border-l-[#496989] bg-white/98 p-4 sm:p-5 shadow-xl shadow-neutral-900/10 backdrop-blur-md">
             <div className="flex items-start gap-3.5">
