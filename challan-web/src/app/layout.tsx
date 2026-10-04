@@ -32,7 +32,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${sourceSerif.variable} ${figtree.variable} ${geistMono.variable} antialiased`}
+        className={`${sourceSerif.variable} ${figtree.variable} ${geistMono.variable} font-sans antialiased`}
       >
         {children}
         <Toaster/>

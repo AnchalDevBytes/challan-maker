@@ -78,13 +78,13 @@ const Signup = () => {
   });
 
   return (
-    <div className="min-h-screen w-full bg-neutral-50 flex items-center justify-center">
-      <div className="w-full max-w-100 sm:bg-white sm:rounded-xl sm:shadow-lg sm:border sm:border-neutral-200 overflow-hidden">
-        <div className="p-8 pb-6">
-          <h2 className="text-2xl font-bold text-neutral-900 text-center">
+    <div className="min-h-screen w-full bg-neutral-50 flex items-center justify-center p-4 sm:p-8">
+      <div className="w-full max-w-md sm:bg-white sm:rounded-2xl sm:shadow-xl sm:border sm:border-neutral-200/80 overflow-hidden">
+        <div className="p-8 sm:p-10 pb-8">
+          <h2 className="text-2xl font-bold text-neutral-900 text-center tracking-tight font-figtree">
             Create your account
           </h2>
-          <p className="text-neutral-500 text-sm text-center mt-2 mb-8">
+          <p className="text-neutral-500 text-sm text-center mt-2 mb-8 font-figtree">
             Welcome to Challan Maker! Please enter your details to create your
             account.
           </p>

@@ -1,31 +1,38 @@
 "use client";
+
 import api from "@/lib/api";
-import { cn } from "@/lib/utils";
 import { setSessionCookie } from "@/lib/session";
 import { useAuthStore } from "@/store/auth-store";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useGoogleLogin } from "@react-oauth/google";
-import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { CheckCircle2, FileText, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import z from "zod";
 
-const loginSchema = z.object({
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(6, "Password must be at least 8 characters long"),
-});
+/*
+  NOTE: Email & password login is temporarily disabled while the email
+  resend service is being configured. The schema and form handler are
+  preserved below so they can be re-enabled seamlessly when ready.
 
-type LoginFormValues = z.infer<typeof loginSchema>;
+  import { useForm } from "react-hook-form";
+  import { zodResolver } from "@hookform/resolvers/zod";
+  import z from "zod";
+
+  const loginSchema = z.object({
+    email: z.string().email("Invalid email address"),
+    password: z.string().min(6, "Password must be at least 8 characters long"),
+  });
+  type LoginFormValues = z.infer<typeof loginSchema>;
+*/
 
 const Login = () => {
   const router = useRouter();
   const { setUser } = useAuthStore();
-  const [showPassword, setShowPassword] = useState<boolean>(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState<boolean>(false);
 
+  /*
+  const [showPassword, setShowPassword] = useState<boolean>(false);
   const {
     register,
     handleSubmit,
@@ -34,18 +41,12 @@ const Login = () => {
     resolver: zodResolver(loginSchema),
   });
 
-  const isPending = isSubmitting || isGoogleLoading;
-
   const onSubmit = async (data: LoginFormValues) => {
     try {
       const response = await api.post("/auth/login", data);
       const userData = response.data.data.user;
       setUser(userData);
-
-      // Write the session flag on the frontend (Vercel) domain so the
-      // Next.js middleware can detect the authenticated state.
       setSessionCookie();
-
       toast.success(response.data.message || "Welcome back!");
       router.push("/main");
     } catch (error: unknown) {
@@ -55,6 +56,7 @@ const Login = () => {
       toast.error(msg);
     }
   };
+  */
 
   const googleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
@@ -86,30 +88,50 @@ const Login = () => {
   });
 
   return (
-    <div className="min-h-screen w-full bg-neutral-50 flex items-center justify-center">
-      <div className="w-full max-w-100 sm:bg-white sm:rounded-xl sm:shadow-lg sm:border sm:border-neutral-200 overflow-hidden">
-        <div className="p-8 pb-6">
-          <h2 className="text-2xl font-bold text-neutral-900 text-center">
+    <div className="min-h-screen w-full lg:grid lg:grid-cols-2 font-figtree">
+      {/* ============================================================ */}
+      {/* LEFT SIDE: Full-screen white on mobile (<sm); Blue accent   */}
+      {/* rectangle on tablet/desktop (sm:) with white card over it.  */}
+      {/* ============================================================ */}
+      <div className="relative min-h-screen w-full bg-white sm:bg-[#496989] flex items-center justify-center p-0 sm:p-8 md:p-10 lg:p-12 overflow-hidden">
+        {/* Decorative glow shapes (only shown when blue background is active) */}
+        <div className="hidden sm:block absolute -top-32 -left-32 w-96 h-96 rounded-full bg-white/10 blur-3xl pointer-events-none" />
+        <div className="hidden sm:block absolute -bottom-32 -right-32 w-96 h-96 rounded-full bg-[#2c4561]/40 blur-3xl pointer-events-none" />
+
+        {/* Auth Form: Full-screen on mobile (<sm); Floating rounded card on sm+ */}
+        <div className="relative z-10 w-full min-h-screen sm:min-h-0 sm:max-w-md bg-white rounded-none sm:rounded-2xl shadow-none sm:shadow-2xl border-none sm:border sm:border-neutral-100/80 px-6 py-10 sm:p-10 flex flex-col justify-center">
+          {/* Logo & Brand Header */}
+          <Link href="/" className="inline-flex items-center gap-2.5 mb-8 group">
+            <div className="bg-[#496989] p-2 rounded-xl transition-transform group-hover:scale-105">
+              <FileText className="w-5 h-5 text-white" />
+            </div>
+            <span className="font-medium text-xl text-neutral-900 tracking-tight font-source-serif">
+              Challan Maker
+            </span>
+          </Link>
+
+          <h1 className="text-2xl font-bold text-neutral-900 tracking-tight">
             Sign in to your account
-          </h2>
-          <p className="text-neutral-500 text-sm text-center mt-2 mb-8">
-            Welcome back to Challan Maker! Please sign in to continue.
+          </h1>
+          <p className="text-neutral-500 text-sm mt-1.5 mb-8">
+            Welcome back to Challan Maker. Please sign in to continue.
           </p>
 
-          <div className="flex gap-4 mb-6">
+          {/* Google Sign-in Button */}
+          <div className="space-y-4">
             <button
               onClick={() => {
                 setIsGoogleLoading(true);
                 googleLogin();
               }}
-              disabled={isPending}
+              disabled={isGoogleLoading}
               type="button"
-              className="flex-1 flex items-center justify-center gap-2 py-2 px-4 border border-neutral-300 rounded-lg font-medium text-neutral-700 hover:bg-neutral-50 transition disabled:opacity-60 disabled:cursor-not-allowed"
+              className="w-full flex items-center justify-center gap-3 py-3 px-4 border border-neutral-300 rounded-xl font-medium text-neutral-700 bg-white hover:bg-neutral-50 hover:border-neutral-400 transition-all shadow-xs disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
             >
               {isGoogleLoading ? (
-                <Loader2 className="w-5 h-5 animate-spin text-neutral-600" />
+                <Loader2 className="w-5 h-5 animate-spin text-[#496989]" />
               ) : (
-                <svg className="w-5 h-5" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24">
                   <path
                     d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
                     fill="#4285F4"
@@ -128,13 +150,27 @@ const Login = () => {
                   />
                 </svg>
               )}
-              {isGoogleLoading ? "Connecting..." : "Google"}
+              <span className="text-sm font-semibold">
+                {isGoogleLoading ? "Connecting to Google..." : "Continue with Google"}
+              </span>
             </button>
+
+            <div className="flex items-center gap-2 px-3 py-2.5 rounded-lg bg-neutral-50 border border-neutral-100">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#496989] shrink-0" />
+              <p className="text-xs text-neutral-500">
+                Single sign-on with Google is enabled and secure.
+              </p>
+            </div>
           </div>
 
+          {/* ============================================================ */}
+          {/* Email/Password form commented out for now while resend email */}
+          {/* is being configured.                                         */}
+          {/* ============================================================ */}
+          {/*
           <div className="relative flex py-4 items-center">
             <div className="grow border-t border-neutral-200" />
-            <span className=" mx-4 text-neutral-400 text-sm">or</span>
+            <span className="mx-4 text-neutral-400 text-xs uppercase tracking-wider">or</span>
             <div className="grow border-t border-neutral-200" />
           </div>
 
@@ -154,9 +190,7 @@ const Login = () => {
                 )}
               />
               {errors.email && (
-                <p className="text-red-500 text-xs mt-1">
-                  {errors.email.message}
-                </p>
+                <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
               )}
             </div>
 
@@ -183,9 +217,7 @@ const Login = () => {
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
               {errors.password && (
-                <p className="text-red-500 text-xs mt-1">
-                  {errors.password.message}
-                </p>
+                <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>
               )}
             </div>
 
@@ -206,18 +238,147 @@ const Login = () => {
               {isSubmitting ? <Loader2 className="animate-spin" /> : "Login"}
             </button>
           </form>
-        </div>
+          */}
 
-        <div className="bg-neutral-50 p-6 border-t border-neutral-100 text-center">
-          <p className="text-neutral-600 text-sm">
-            Don&apos;t have an account?{" "}
-            <Link
-              href="/signup"
-              className="text-[#496989] font-semibold hover:underline"
-            >
-              Sign up
-            </Link>
-          </p>
+          {/* Card Footer */}
+          <div className="mt-8 pt-6 border-t border-neutral-100 text-center">
+            <p className="text-neutral-500 text-xs leading-relaxed">
+              New to Challan Maker? Sign in with Google to create your account
+              instantly.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* ============================================================ */}
+      {/* RIGHT SIDE: White Background with Geometric Graphic Shapes  */}
+      {/* ============================================================ */}
+      <div className="hidden lg:flex relative min-h-screen bg-white items-center justify-center p-12 overflow-hidden border-l border-neutral-100">
+        {/* Subtle grid pattern background */}
+        <div className="absolute inset-0 bg-size-[32px_32px] bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] opacity-60" />
+
+        {/* Ambient circular backdrop elements */}
+        <div className="absolute -top-16 -right-16 w-80 h-80 rounded-full bg-[#496989]/5 blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-20 -left-20 w-96 h-96 rounded-full bg-neutral-100 blur-3xl pointer-events-none" />
+
+        {/* Central Graphic Composition */}
+        <div className="relative z-10 w-full max-w-md flex flex-col items-center">
+          {/* Surrounding Geometric Shapes */}
+          <div className="relative w-full">
+            {/* Circular Graphic Accents */}
+            <div className="absolute -top-6 -left-6 w-20 h-20 rounded-full border border-dashed border-[#496989]/30 pointer-events-none" />
+            <span className="absolute -top-2 -left-2 w-3.5 h-3.5 rounded-full bg-[#496989]/25 pointer-events-none" />
+            <span className="absolute top-12 -right-4 w-5 h-5 rounded-full bg-emerald-400/20 pointer-events-none" />
+
+            {/* Floating Top Satellite Badge (Rectangle Shape) */}
+            <div className="absolute -top-4 -right-4 z-20 rounded-xl border border-neutral-200/80 bg-white/95 px-3.5 py-1.5 shadow-md shadow-neutral-900/5 backdrop-blur-xs flex items-center gap-2 text-xs font-medium text-neutral-700">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              Live GST Preview
+            </div>
+
+            {/* Main Delivery Challan Preview Mockup (Rectangle Card) */}
+            <div className="relative rounded-2xl border border-neutral-200/90 bg-white p-6 shadow-xl shadow-neutral-900/5 backdrop-blur-xs">
+              {/* Challan Card Header */}
+              <div className="flex items-center justify-between pb-4 border-b border-neutral-100">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-[#496989] flex items-center justify-center text-white">
+                    <FileText className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-sm text-neutral-900 font-source-serif">
+                      Delivery Challan
+                    </h3>
+                    <p className="text-[11px] text-neutral-400">#DC-2026-0842</p>
+                  </div>
+                </div>
+                <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/80 text-[11px] font-medium">
+                  Dispatched
+                </span>
+              </div>
+
+              {/* Sender & Consignee details grid */}
+              <div className="mt-4 grid grid-cols-2 gap-3 text-xs">
+                <div className="p-2.5 rounded-lg bg-neutral-50/70 border border-neutral-100">
+                  <span className="text-neutral-400 block text-[10px] uppercase tracking-wider font-semibold">
+                    Consignor
+                  </span>
+                  <span className="font-medium text-neutral-800 truncate block mt-0.5">
+                    Apex Dynamics Ltd
+                  </span>
+                </div>
+                <div className="p-2.5 rounded-lg bg-neutral-50/70 border border-neutral-100">
+                  <span className="text-neutral-400 block text-[10px] uppercase tracking-wider font-semibold">
+                    Consignee
+                  </span>
+                  <span className="font-medium text-neutral-800 truncate block mt-0.5">
+                    Metro Logistics Hub
+                  </span>
+                </div>
+              </div>
+
+              {/* Item Rows Preview */}
+              <div className="mt-4 space-y-2">
+                <div className="flex items-center justify-between p-2.5 rounded-lg bg-neutral-50/60 border border-neutral-100/80">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-[#496989]" />
+                    <span className="text-xs font-medium text-neutral-700">
+                      Precision Aluminum Casing
+                    </span>
+                  </div>
+                  <span className="text-xs font-semibold text-neutral-900">
+                    120 pcs
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between p-2.5 rounded-lg bg-neutral-50/60 border border-neutral-100/80">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-[#496989]/50" />
+                    <span className="text-xs font-medium text-neutral-700">
+                      Fastener & Mounting Kit
+                    </span>
+                  </div>
+                  <span className="text-xs font-semibold text-neutral-900">
+                    60 sets
+                  </span>
+                </div>
+              </div>
+
+              {/* Total & Verification Stamp */}
+              <div className="mt-4 pt-3.5 border-t border-neutral-100 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-neutral-500">Total Quantity:</span>
+                  <span className="text-xs font-bold text-neutral-900">
+                    180 units
+                  </span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="w-5 h-5 rounded-full bg-[#496989]/10 text-[#496989] flex items-center justify-center text-[10px] font-bold">
+                    ✓
+                  </span>
+                  <span className="text-[11px] font-medium text-neutral-600">
+                    E-Sign Validated
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Floating Bottom Satellite Badge (Rectangle Shape) */}
+            <div className="absolute -bottom-4 -left-4 z-20 rounded-xl border border-neutral-200/80 bg-white/95 px-3.5 py-1.5 shadow-md shadow-neutral-900/5 backdrop-blur-xs flex items-center gap-2 text-xs font-medium text-neutral-700">
+              <CheckCircle2 className="w-3.5 h-3.5 text-[#496989]" />
+              100% Paperless & Export Ready
+            </div>
+          </div>
+
+          {/* Accompanying Editorial Copy */}
+          <div className="mt-10 text-center max-w-sm">
+            <h2 className="text-xl font-medium text-neutral-900 font-source-serif">
+              Crafted for modern operations
+            </h2>
+            <p className="mt-2 text-xs leading-relaxed text-neutral-500">
+              Generate, print, and share GST-compliant delivery challans in
+              seconds with clean typography and zero spreadsheet hassle.
+            </p>
+          </div>
         </div>
       </div>
     </div>

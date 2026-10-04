@@ -44,9 +44,9 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="min-h-screen w-full bg-neutral-50 flex items-center justify-center">
-      <div className="w-full max-w-100 sm:bg-white sm:rounded-xl sm:shadow-lg sm:border sm:border-neutral-200 overflow-hidden">
-        <div className="p-8 pb-6">
+    <div className="min-h-screen w-full bg-neutral-50 flex items-center justify-center p-4 sm:p-8">
+      <div className="w-full max-w-md sm:bg-white sm:rounded-2xl sm:shadow-xl sm:border sm:border-neutral-200/80 overflow-hidden">
+        <div className="p-8 sm:p-10 pb-8">
           <div className="flex justify-center mb-6">
             <div className="hidden h-12 w-12 bg-blue-50 rounded-full sm:flex items-center justify-center text-blue">
               <Mail size={24} />

@@ -129,10 +129,10 @@ const OtpVerify = ({ length = 6 }: { length?: number }) => {
   if (!tempEmail) return null;
 
   return (
-    <div className="min-h-screen w-full bg-neutral-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-100 sm:bg-white sm:rounded-xl sm:shadow-lg sm:border sm:border-neutral-200 overflow-hidden">
-        <div className="p-10 pb-8 flex flex-col items-center">
-          <h2 className="text-xl font-bold text-neutral-900 text-center">
+    <div className="min-h-screen w-full bg-neutral-50 flex items-center justify-center p-4 sm:p-8">
+      <div className="w-full max-w-md sm:bg-white sm:rounded-2xl sm:shadow-xl sm:border sm:border-neutral-200/80 overflow-hidden">
+        <div className="p-8 sm:p-10 pb-8 flex flex-col items-center">
+          <h2 className="text-2xl font-bold text-neutral-900 text-center tracking-tight font-figtree">
             Check your email
           </h2>
           <p className="text-neutral-500 text-sm text-center mt-1">
