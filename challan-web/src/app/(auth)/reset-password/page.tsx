@@ -103,8 +103,11 @@ const ResetPassword = () => {
 
       toast.success("Password reset successful! You can now login.");
       router.push("/login");
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || "Failed to reset password");
+    } catch (error: unknown) {
+      const msg =
+        (error as { response?: { data?: { message?: string } } })?.response
+          ?.data?.message || "Failed to reset password";
+      toast.error(msg);
     }
   };
 
@@ -138,6 +141,7 @@ const ResetPassword = () => {
                       }}
                       type="text"
                       inputMode="numeric"
+                      disabled={isSubmitting}
                       value={otp[index]}
                       onChange={(e) => handleChange(index, e.target.value)}
                       onKeyDown={(e) => handleKeyDown(index, e)}
@@ -171,17 +175,19 @@ const ResetPassword = () => {
               </label>
               <input
                 {...register("newPassword")}
+                disabled={isSubmitting}
                 type={showPassword ? "text" : "password"}
                 placeholder="Enter your password"
                 className={cn(
-                  "w-full px-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-blue focus:outline-none placeholder-neutral-400",
+                  "w-full px-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-blue focus:outline-none placeholder-neutral-400 disabled:opacity-60 disabled:cursor-not-allowed",
                   errors.newPassword && "border-red-500 focus:ring-red-500",
                 )}
               />
               <button
                 type="button"
+                disabled={isSubmitting}
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-9 text-neutral-400 hover:text-neutral-600"
+                className="absolute right-3 top-9 text-neutral-400 hover:text-neutral-600 disabled:opacity-50"
               >
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
@@ -198,17 +204,19 @@ const ResetPassword = () => {
               </label>
               <input
                 {...register("confirmPassword")}
+                disabled={isSubmitting}
                 type={showPassword ? "text" : "password"}
                 placeholder="Enter your password"
                 className={cn(
-                  "w-full px-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-blue focus:outline-none placeholder-neutral-400",
+                  "w-full px-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-blue focus:outline-none placeholder-neutral-400 disabled:opacity-60 disabled:cursor-not-allowed",
                   errors.confirmPassword && "border-red-500 focus:ring-red-500",
                 )}
               />
               <button
                 type="button"
+                disabled={isSubmitting}
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-9 text-neutral-400 hover:text-neutral-600"
+                className="absolute right-3 top-9 text-neutral-400 hover:text-neutral-600 disabled:opacity-50"
               >
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
@@ -222,12 +230,12 @@ const ResetPassword = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full py-3 bg-blue hover:bg-dark-blue text-white font-bold rounded-lg transition-all flex items-center justify-center gap-2"
+              className="w-full py-3 bg-blue hover:bg-dark-blue text-white font-bold rounded-lg transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
             >
               {isSubmitting ? (
                 <Loader2 className="animate-spin" />
               ) : (
-                "Send Code"
+                "Reset Password"
               )}
             </button>
           </form>

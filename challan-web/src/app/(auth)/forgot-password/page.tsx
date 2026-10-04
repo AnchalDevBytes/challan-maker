@@ -30,13 +30,16 @@ const ForgotPassword = () => {
 
   const onSubmit = async (data: ForgotPasswordValues) => {
     try {
-      await api.post("auth/forgot-password", data);
+      await api.post("/auth/forgot-password", data);
 
       setTempEmail(data.email);
       toast.success("OTP sent to your email");
       router.push("/reset-password");
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || "failed");
+    } catch (error: unknown) {
+      const msg =
+        (error as { response?: { data?: { message?: string } } })?.response
+          ?.data?.message || "Failed";
+      toast.error(msg);
     }
   };
 
@@ -53,7 +56,7 @@ const ForgotPassword = () => {
             Forgot Password?
           </h2>
           <p className="text-neutral-500 text-sm text-center mt-2 mb-8">
-            No worries, we'll send you reset instructions.
+            No worries, we&apos;ll send you reset instructions.
           </p>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -63,10 +66,11 @@ const ForgotPassword = () => {
               </label>
               <input
                 {...register("email")}
+                disabled={isSubmitting}
                 type="email"
                 placeholder="Enter your email address"
                 className={cn(
-                  "w-full px-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-blue focus:outline-none placeholder-neutral-400",
+                  "w-full px-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-blue focus:outline-none placeholder-neutral-400 disabled:opacity-60 disabled:cursor-not-allowed",
                   errors.email && "border-red-500 focus:ring-red-500",
                 )}
               />
@@ -80,7 +84,7 @@ const ForgotPassword = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full py-3 bg-blue hover:bg-dark-blue text-white font-bold rounded-lg transition-all flex items-center justify-center gap-2"
+              className="w-full py-3 bg-blue hover:bg-dark-blue text-white font-bold rounded-lg transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
             >
               {isSubmitting ? (
                 <Loader2 className="animate-spin" />

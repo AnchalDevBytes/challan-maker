@@ -1,5 +1,6 @@
 import axios from "axios";
 import { clearSessionCookie } from "@/lib/session";
+import { useApiStatusStore } from "@/store/api-status-store";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -11,9 +12,39 @@ const api = axios.create({
   },
 });
 
+declare module "axios" {
+  export interface InternalAxiosRequestConfig {
+    __tracked?: boolean;
+    _retry?: boolean;
+  }
+}
+
+api.interceptors.request.use(
+  (config) => {
+    if (typeof window !== "undefined") {
+      config.__tracked = true;
+      useApiStatusStore.getState().startRequest();
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  },
+);
+
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    if (typeof window !== "undefined" && response.config?.__tracked) {
+      response.config.__tracked = false;
+      useApiStatusStore.getState().finishRequest();
+    }
+    return response;
+  },
   async (error) => {
+    if (typeof window !== "undefined" && error.config?.__tracked) {
+      error.config.__tracked = false;
+      useApiStatusStore.getState().finishRequest();
+    }
     const originalRequest = error.config;
 
     const isAuthRequest =

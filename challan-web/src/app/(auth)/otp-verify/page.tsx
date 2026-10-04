@@ -69,6 +69,8 @@ const OtpVerify = ({ length = 6 }: { length?: number }) => {
     }
   };
 
+  const isPending = isSubmitting || isResending;
+
   const onSubmit = async () => {
     const otpValue = otp.join("");
     if (otpValue.length !== length) {
@@ -93,25 +95,30 @@ const OtpVerify = ({ length = 6 }: { length?: number }) => {
 
       toast.success(response.data.message || "Account verified successfully");
       router.push("/main");
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || "Invalid OTP");
-    } finally {
+    } catch (error: unknown) {
+      const msg =
+        (error as { response?: { data?: { message?: string } } })?.response
+          ?.data?.message || "Invalid OTP";
+      toast.error(msg);
       setIsSubmitting(false);
     }
   };
 
   const handleResend = async () => {
-    if (timer > 0) return;
+    if (timer > 0 || isPending) return;
 
     setIsResending(true);
     try {
       await api.post("/auth/resend-otp", { email: tempEmail });
       setTimer(600);
       toast.success("New OTP sent to your email");
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || "Failed to resend OTP");
+    } catch (error: unknown) {
+      const errRes = (
+        error as { response?: { status?: number; data?: { message?: string } } }
+      )?.response;
+      toast.error(errRes?.data?.message || "Failed to resend OTP");
 
-      if (error.response?.status === 400) {
+      if (errRes?.status === 400) {
         router.push("/signup");
       }
     } finally {
@@ -134,7 +141,11 @@ const OtpVerify = ({ length = 6 }: { length?: number }) => {
 
           <div className="flex items-center gap-2 mt-2 mb-8">
             <span className="text-neutral-700 font-medium">{tempEmail}</span>
-            <button className="text-blue hover:opacity-80 transition">
+            <button
+              disabled={isPending}
+              onClick={() => router.push("/signup")}
+              className="text-blue hover:opacity-80 transition disabled:opacity-50"
+            >
               <Pencil size={18} />
             </button>
           </div>
@@ -149,6 +160,7 @@ const OtpVerify = ({ length = 6 }: { length?: number }) => {
                   }}
                   type="text"
                   inputMode="numeric"
+                  disabled={isPending}
                   value={otp[index]}
                   onChange={(e) => handleChange(index, e.target.value)}
                   onKeyDown={(e) => handleKeyDown(index, e)}
@@ -174,20 +186,20 @@ const OtpVerify = ({ length = 6 }: { length?: number }) => {
             ) : (
               <button
                 onClick={handleResend}
-                disabled={isResending}
+                disabled={isPending}
                 className="text-sm font-medium text-blue-600 hover:underline disabled:opacity-50 flex items-center gap-2"
               >
                 {isResending && <Loader2 className="w-3 h-3 animate-spin" />}
-                Didn't receive a code? Resend
+                Didn&apos;t receive a code? Resend
               </button>
             )}
           </div>
 
           <button
             onClick={onSubmit}
-            disabled={isSubmitting}
+            disabled={isPending}
             type="submit"
-            className="w-full py-3 bg-blue hover:bg-dark-blue text-white font-bold rounded-lg transition-all flex items-center justify-center gap-2 mb-6"
+            className="w-full py-3 bg-blue hover:bg-dark-blue text-white font-bold rounded-lg transition-all flex items-center justify-center gap-2 mb-6 disabled:opacity-70 disabled:cursor-not-allowed"
           >
             {isSubmitting ? (
               <Loader2 className="animate-spin" />
